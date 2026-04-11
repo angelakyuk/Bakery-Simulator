@@ -1,9 +1,12 @@
+# ANGELA KYUK
+# Functions used in main function
 def valid_request(request):
     """Ensure that the player's input for a menu option is valid.
     """
 def fulfill_request(request):
     """Carry out the player's menu option request.
     """  
+# Main function to grade
 def prompt_request():
     """Prompt player for menu option requests, validate those requests and 
     fulfill them."
