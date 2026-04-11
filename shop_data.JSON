@@ -1,0 +1,34 @@
+{
+  "Recipes" : { 
+        "Sugar cookies" : ["flour", "sugar", "butter", "eggs"],
+        "Vanilla cupcakes" : ["flour", "sugar", "butter", "milk", "eggs"],
+        "Chocolate cupcakes" : ["flour", "cocoa powder", "sugar", "butter", "milk", "eggs"],
+        "Red velvet cupcakes" : ["flour", "cocoa powder", "sugar", "butter", "buttermilk", "eggs"],
+        "Gourmet brownie cupcakes" : ["flour", "cocoa powder", "sugar", "butter", "eggs", "chocolate chunks"]
+    },
+    "Recipe prices" : {
+        "Sugar cookies" : 0,
+        "Vanilla cupcakes" : 10,
+        "Chocolate cupcakes" : 20,
+        "Red velvet cupcakes" : 30,
+        "Gourmet brownie cupcakes" : 40
+    },
+    "Selling prices" : {
+        "Sugar cookies" : 1,
+        "Vanilla cupcakes" : 2,
+        "Chocolate cupcakes" : 2.50,
+        "Red velvet cupcakes" : 3,
+        "Gourmet brownie cupcakes" : 4.50
+    },
+    "Ad Level" : {
+        "Level 1" : 3,
+        "Level 2" : 6,
+        "Level 3" : 9
+    },
+    "Ad prices" : {
+        "Level 1" : 0,
+        "Level 2" : 30,
+        "level 3" : 50
+    },
+    "Order amounts" : [3, 6, 9, 12]
+    }
