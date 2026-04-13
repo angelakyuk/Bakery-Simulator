@@ -1,14 +1,24 @@
 # ANGELA KYUK
-# Functions used in main function
+# Dummy functions for main function
 def valid_request(request):
     """Ensure that the player's input for a menu option is valid.
     """
+    if request == 'shop':
+        return request
+    elif request != 'shop':
+        return 'invalid'
 def fulfill_request(request):
     """Carry out the player's menu option request.
     """  
+    if request == 'shop':
+        print('request fulfilled')
+    elif request == 'continue':
+        print('continue to next day')
 # Main function to grade
+# enter shop for valid request
+# enter anything else for invalid request
 def prompt_request():
-    """Prompt player for menu option requests, validate those requests and 
+    """Prompt player for menu option requests, validate those requests, and 
     fulfill them."
     
     Side effects:
