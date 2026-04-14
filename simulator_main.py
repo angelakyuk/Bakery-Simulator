@@ -129,7 +129,7 @@ def handle_dish(current_dish, difficulty, recipe_dict):
 
     
     shuffled = correct_order[:]
-    random.shuffle(shuffled)
+    shuffle(shuffled)
 
     print(f"\n Dish: {current_dish}")
     print("Ingredients (shuffled):")
