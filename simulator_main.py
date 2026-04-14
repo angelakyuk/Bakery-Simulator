@@ -108,7 +108,7 @@ def create_customers(num, customers):
 
 from random import shuffle
 
-def handle_dish(current_dish, difficulty, recipe_dict):
+def handle_dish(current_dish, recipe_dict):
     """
     Handles the playing stage of each dish by giving inputs to the user. Their
     performance is decided by the order in which the ingredients are typed.
