@@ -1,22 +1,74 @@
 # ANGELA KYUK
-# Dummy functions for main function
+from numpy import random
+# from argparse import ArgumentParser
+# import sys
+
 def valid_request(request):
-    """Ensure that the player's input for a menu option is valid.
+    """Ensure that the player's input for a menu option request is valid.
+    
+    Args:
+        request (str): player's input when asked if they want a certain menu 
+            option.
+    
+    Returns:
+        str: the player's input if it's valid. If input is invalid, 'invalid'.
     """
-    if request == 'shop':
-        return request
-    elif request != 'shop':
+    valid_requests = ('shop', 'recipes', 'continue', 'end game')
+    if not isinstance(request, str):
         return 'invalid'
+    else:
+        if request in valid_requests:
+            return request
+        else:
+            return 'invalid'
+        
+advertisement = {1 : 3}
+owned_recipes = ('cookie')
+recipes = {'cookie' : ['ingredient', 'ingredient']}
+shop = {'item' : 5}
+# data will be from JSON file
+    
 def fulfill_request(request):
-    """Carry out the player's menu option request.
-    """  
-    if request == 'shop':
-        print('request fulfilled')
+    """Carry out player's menu option request.
+    
+    Args:
+        request: player's menu option request.
+    
+    Side effects:
+        Print to stdout.
+        Modify attributes if player purchases an item.
+    """
+    if request == 'recipes':
+        print(owned_recipes)
+    elif request == 'shop':
+        # function that shows shop and unlocks items
+        pass
     elif request == 'continue':
-        print('continue to next day')
-# Main function to grade
-# enter shop for valid request
-# enter anything else for invalid request
+        # function that starts new day/round
+        pass
+    elif request == 'end game':
+        print("Thanks for playing!")
+        quit()
+
+def day_end(ad_level, gross_profit):
+    """Display end of day stats and prompt player requests.
+    
+    Args:
+        ad_level: player's current ad level.
+        gross_profit: player's gross profit for the day.
+        
+    Side effects:
+        Print to stdout.
+    """
+    expenses = round(gross_profit * random.rand(), 2)
+    print("------ Today's Stats ------\n"
+          f"Total customers: {advertisement[ad_level]}\n"
+          f"Gross profit: ${round(gross_profit, 2)}\n"
+          f"Expenses: ${expenses}\n"
+          f"Net Profit: ${round(gross_profit - expenses, 2)}\n"
+          )
+    prompt_request()
+
 def prompt_request():
     """Prompt player for menu option requests, validate those requests, and 
     fulfill them."
