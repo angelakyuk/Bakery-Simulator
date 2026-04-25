@@ -42,7 +42,7 @@ class Shop:
         for i in self.recipe_stock:
             print(f"""{i}\t
                   Price: {self.recipe_prices[self.recipe_stock.index(i)]}""")
-        print("\n")
+        print("\nUpgrades:")
         for i in self.ad_stock:
             print(f"""{i}\t
                   Price: {self.ad_prices[self.ad_stock.index(i)]}""")
