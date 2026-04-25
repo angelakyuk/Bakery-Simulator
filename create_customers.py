@@ -1,6 +1,6 @@
 from random import choice
 
-def create_customers(self, num, customers):
+def create_customers(num, customers):
     """Creates a list of customers from the amount specified for the day
 
     Args: 
