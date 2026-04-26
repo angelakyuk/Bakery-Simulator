@@ -7,11 +7,11 @@ def valid_request(request):
     """Ensure that the player's input for a menu option request is valid.
     
     Args:
-        request (str): player's input when asked if they want a certain menu 
+        request (str): The player's input when asked if they want a certain menu 
             option.
     
     Returns:
-        str: the player's input if it's valid. If input is invalid, 'invalid'.
+        str: The player's input if it's valid. If input is invalid, 'invalid'.
     """
     valid_requests = ('shop', 'recipes', 'continue', 'end game')
     if not isinstance(request, str):
@@ -32,7 +32,7 @@ def fulfill_request(request):
     """Carry out player's menu option request.
     
     Args:
-        request: player's menu option request.
+        request: The player's menu option request.
     
     Side effects:
         Print to stdout.
@@ -54,8 +54,8 @@ def day_end(ad_level, gross_profit):
     """Display end of day stats and prompt player requests.
     
     Args:
-        ad_level: player's current ad level.
-        gross_profit: player's gross profit for the day.
+        ad_level: The player's current ad level.
+        gross_profit: The player's gross profit for the day.
         
     Side effects:
         Print to stdout.
