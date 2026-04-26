@@ -1,3 +1,5 @@
+from shop import Shop
+
 # ANGELA KYUK
 from numpy import random
 # from argparse import ArgumentParser
