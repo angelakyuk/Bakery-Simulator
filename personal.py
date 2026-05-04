@@ -67,32 +67,40 @@ class Shop:
 # request functions in here 
 class Game:
     """GameState
+    
+    Attributes:
+        gamedata (dict): A dictionary with the following keys:
+            - "Recipes" (dict of {str:list[str]}): A dictionary of recipe 
+                ingredients. The keys are recipe names and the values are a
+                list of ingredients.
+            - "Recipe prices" (dict of {str:int}): A dictionary of recipe 
+                prices for the player. The keys are recipe names and the 
+                values are the corresponding price.
+            - "Selling prices" (dict of {str:int}): A dictionary of selling
+                prices of baked goods to customers. The keys are recipe
+                names and the values are the corresponding selling price.
+            - "Ad levels" (dict of {str:int}): A dictionary of ad level 
+                information. The keys are ad levels and the values are the
+                number of customers the player will serve at that level.
+            - "Ad prices" (dict of {str:int}): A dictionary of ad level 
+                prices. The keys are ad levels and the values are the 
+                corresponding price.
+            recipes (list):
+            owned_recipes (list):
+            ad_levels (list):
+            ad_level (str):
+            profit (int):
     """
     def __init__(self, gamedata):
         """_summary_
 
         Args:
-            gamedata (dict): A dictionary with the following keys:
-                - "Recipes" (dict of {str:list[str]}): A dictionary of recipe 
-                    ingredients. The keys are recipe names and the values are a
-                    list of ingredients.
-                - "Recipe prices" (dict of {str:int}): A dictionary of recipe 
-                    prices for the player. The keys are recipe names and the 
-                    values are the corresponding price.
-                - "Selling prices" (dict of {str:int}): A dictionary of selling
-                    prices of baked goods to customers. The keys are recipe
-                    names and the values are the corresponding selling price.
-                - "Ad levels" (dict of {str:int}): A dictionary of ad level 
-                    information. The keys are ad levels and the values are the
-                    number of customers the player will serve at that level.
-                - "Ad prices" (dict of {str:int}): A dictionary of ad level 
-                    prices. The keys are ad levels and the values are the 
-                    corresponding price.
+            gamedata (str): A filepath to a JSON file with game data.
                     
         Side effects: Sets attributes gamedata, recipes, owned_recipes,
             ad_levels, ad_level, and profit.
         """
-        self.gamedata = gamedata
+        self.gamedata = dict(gamedata)
         self.recipes = [r for r in gamedata["Recipes"]]
         self.ad_levels = [a for a in gamedata["Ad levels"]]
         self.owned_recipes = {self.recipes[0]}
@@ -192,8 +200,4 @@ class Game:
         self.prompt_request()
 
 def main(filepath):
-    with open(filepath, "r", encoding="utf-8"):
-        gamedata = load(filepath)
-        game = Game(dict(gamedata)) 
-        # ShopData(dict(gamedata))
-        # Player(dict(gamedata))
+    game = Game(filepath)
