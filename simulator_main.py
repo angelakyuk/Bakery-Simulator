@@ -2,7 +2,6 @@ from numpy import random
 import json
 
 # ANGELA KYUK
-import numpy as np
 class Shop:
     """Provide and update information about shop items.
     
