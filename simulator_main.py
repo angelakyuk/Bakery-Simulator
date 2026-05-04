@@ -18,7 +18,7 @@ class Shop:
             "Owned", or and empty string "".
     """
     def __init__(self):
-        """Initialize ShopData object.
+        """Initialize Shop object.
             
         Side effects:
             Set attributes unlockable, recipe_shop, and ad_shop.
@@ -46,7 +46,7 @@ class Shop:
                        for r, prices in self.recipe_shop.items()]
         
         ad_shop = [f"{a} | {prices[0]} | {prices[1]} | {"Current" if a in 
-                   self.owned else " "}"
+                   self.ad_level else " "}"
                    for a, prices in self.ad_shop.items()]
         return (f"------ Recipe Shop ------\n"
                 f"Recipe | Purchase Price | Selling Price | Lock Status\n"
