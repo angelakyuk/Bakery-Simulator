@@ -16,6 +16,9 @@ class ShopData:
             information. Keys are the ad level. Values are tuples of the level's 
             price for the player and the number of customers they'll serve at 
             that level.
+        unlockable (dict of {str:str}): A dictionary of the lock status of shop
+            items. Keys are recipe or ad level names. Values are "Locked",
+            "Owned", or and empty string "".
     """
     def __init__(self):
         """Initialize ShopData object.
@@ -23,13 +26,17 @@ class ShopData:
         Side effects:
             Set attributes unlockable, recipe_shop, and ad_shop.
         """
-        self.unlockable = {}
+        all_shop = self.recipes.extend(self.ad_levels)
+        self.unlockable = {i : "Locked" for i in all_shop}
+        self.unlockable["Sugar cookies"] = "Owned"
+        self.unlockable["Level 1"] = "Owned"
         self.recipe_shop = {r : (self.gamedata["Recipe prices"][r], 
                                  self.gamedata["Selling prices"][r]) 
                             for r in self.recipes}
         self.ad_shop = {a : (self.gamedata["Ad prices"][a], 
                              self.gamedata["Ad levels"][a]) 
                         for a in self.ad_levels}
+        # could make JSON file recipe prices {name:(int, int)}
         
     def __str__(self):
         """Provide an informal string representation for the game's shop, which
@@ -38,9 +45,12 @@ class ShopData:
         Returns:
             str: The informal representation of the game's shop.
         """
-        recipe_shop = [f"{r} | {prices[0]} | {prices[1]}" 
+        recipe_shop = [f"{r} | {prices[0]} | {prices[1]} | {"Owned" if r in 
+                       self.owned_recipes else "Locked"}" 
                        for r, prices in self.recipe_shop.items()]
-        ad_shop = [f"{a} | {prices[0]} | {prices[1]}" 
+        
+        ad_shop = [f"{a} | {prices[0]} | {prices[1]} | {"Current" if a in 
+                   self.owned else " "}"
                    for a, prices in self.ad_shop.items()]
         return (f"------ Recipe Shop ------\n"
                 f"Recipe | Purchase Price | Selling Price | Lock Status\n"
@@ -79,8 +89,8 @@ class Game:
                     prices. The keys are ad levels and the values are the 
                     corresponding price.
                     
-        Side effects: Sets attributes gamedata, owned_recipes, ad_level, and 
-            profit.
+        Side effects: Sets attributes gamedata, recipes, owned_recipes,
+            ad_levels, ad_level, and profit.
         """
         self.gamedata
         self.recipes = [r for r in gamedata["Recipes"]]
@@ -153,7 +163,7 @@ class Game:
             validated = self.valid_request(request.lower())
         self.fulfill_request(validated)
         more = input("Would you like to select another menu option? (Y/N). ")
-        while more.lower() != 'y' and more.lower() != 'n':
+        while more.lower() not in ('y', 'n'):
             print("That's not a valid option. Try again!")
             more = input("Would you like to select another menu option? (Y/N). ")
         if more.lower() == 'y':

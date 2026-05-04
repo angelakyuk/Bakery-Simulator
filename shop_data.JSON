@@ -20,22 +20,15 @@
         "Red velvet cupcakes" : 3,
         "Gourmet brownie cupcakes" : 4.50
     },
-<<<<<<< HEAD
     "Ad Levels" : {
         "Level 1" : 3,
         "Level 2" : 6,
         "Level 3" : 9
-=======
-    "Ad Level" : {
-        "Advertising Upgrade Level 1" : 3,
-        "Advertising Upgrade Level 2" : 6,
-        "Advertising Upgrade Level 3" : 9
->>>>>>> 88ed3e5e0a54266aad7d2cf1d8a9230a3a4e7f66
     },
     "Ad prices" : {
-        "Advertising Upgrade Level 1" : 0,
-        "Advertising Upgrade Level 2" : 30,
-        "Advertising Upgrade level 3" : 50
+        "Level 1" : 0,
+        "Level 2" : 30,
+        "Level 3" : 50
     },
     "Order amounts" : [3, 6, 9, 12]
     }
