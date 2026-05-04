@@ -1,7 +1,7 @@
 from shop import Shop
 
 # ANGELA KYUK
-from numpy import random
+import numpy as np
 # from argparse import ArgumentParser
 # import sys
 
@@ -62,7 +62,7 @@ def day_end(ad_level, gross_profit):
     Side effects:
         Print to stdout.
     """
-    expenses = round(gross_profit * random.rand(), 2)
+    expenses = round(gross_profit * np.random.rand(), 2)
     print("------ Today's Stats ------\n"
           f"Total customers: {advertisement[ad_level]}\n"
           f"Gross profit: ${round(gross_profit, 2)}\n"
@@ -119,11 +119,8 @@ def handle_unlocks(money, recipes):
         dict: The updated dictionary of recipes with their current unlock status
     """
 
-    for name, info in recipes.items():
-        if money >= info["price"]:
-            info["unlocked"] = True
-        else:
-            info["unlocked"] = False
+    for name, i in recipes.items():
+        i["unlocked"] = True if money >= i["price"] else i["unlocked"] = False
 
     return recipes
 

@@ -1,3 +1,4 @@
+#Used conditional expression
 def handle_unlocks(money, recipes):
     """
     Determines which recipe is unlocked based on how much money the baker has.
@@ -16,9 +17,10 @@ def handle_unlocks(money, recipes):
     """
 
     for name, info in recipes.items():
-        if money >= info["price"]:
-            info["unlocked"] = True
-        else:
-            info["unlocked"] = False
+        info["unlocked"] = True if money >= info["price"] else info["unlocked"] = False
 
     return recipes
+ #if money >= info["price"]:
+            #info["unlocked"] = True
+        #else:
+            #info["unlocked"] = False
