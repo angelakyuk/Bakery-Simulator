@@ -5,7 +5,7 @@ from json import load
 
 # just an idea. my reasoning is that this class could be used to update and
 # keep track of the status of shop items. this means we could also use __str__()
-class ShopData:
+class Shop:
     """Provide and update information about shop items.
     
     Attributes:
