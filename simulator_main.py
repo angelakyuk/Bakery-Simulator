@@ -1,7 +1,7 @@
 from shop import Shop
 
 # ANGELA KYUK
-from numpy import random
+import numpy as np
 # from argparse import ArgumentParser
 # import sys
 
@@ -62,7 +62,7 @@ def day_end(ad_level, gross_profit):
     Side effects:
         Print to stdout.
     """
-    expenses = round(gross_profit * random.rand(), 2)
+    expenses = round(gross_profit * np.random.rand(), 2)
     print("------ Today's Stats ------\n"
           f"Total customers: {advertisement[ad_level]}\n"
           f"Gross profit: ${round(gross_profit, 2)}\n"
@@ -119,42 +119,42 @@ def handle_unlocks(money, recipes):
         dict: The updated dictionary of recipes with their current unlock status
     """
 
-    for name, info in recipes.items():
-        if money >= info["price"]:
-            info["unlocked"] = True
-        else:
-            info["unlocked"] = False
+    for name, i in recipes.items():
+        i["unlocked"] = True if money >= i["price"] else i["unlocked"] = False
 
     return recipes
 
 #Ethan Gustave's Function
 from random import choice
 
-def create_customers(num, customers):
+def create_customers(num, customer_path):
     """Creates a list of customers from the amount specified for the day
 
     Args: 
 	    num(int): the number of customers to be generated based on ad level.
-	    customers(dict): the customers to be chosen from. Key is customer name,
-        associated value is a customer object.
+	    customers_path(str): the path of the txt file to be used to import
+            customer names.
 
     Returns: 
-        A list of dictionaries. In the dictionary, the key will be the customer 
-        name and the associated value will be a reference to a customer object.
+        A list of customer names.
     """
     
-    if num > len(customers):
-        num = len(customers)
+    with open(customer_path, 'r') as f:
+        customer_start = f.readlines()
         
-    customer_start = customers.copy()
     customer_final = []
-    count = 0
+    indicies = []
     
-    while(count < num):
-        curr = choice(customer_start.keys())
-        customer_final.append(curr, customer_start.pop(curr))
+    count = 0 
+    while count < num:
+        curr = choice(customer_start)
+        if customer_start[curr] in indicies:
+            count -= 1
+        else:
+            customer_final.append(curr)
+            indicies.append(customer_start[curr])
         count += 1
-        
+       
     return customer_final
 
 
