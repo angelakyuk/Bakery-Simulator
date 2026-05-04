@@ -1,5 +1,5 @@
 import json
-from personal import ShopData
+from personal import Shop
 
 class Shop:
     """Provide and update information about shop items.
