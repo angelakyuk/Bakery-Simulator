@@ -92,7 +92,7 @@ class Game:
         Side effects: Sets attributes gamedata, recipes, owned_recipes,
             ad_levels, ad_level, and profit.
         """
-        self.gamedata
+        self.gamedata = gamedata
         self.recipes = [r for r in gamedata["Recipes"]]
         self.ad_levels = [a for a in gamedata["Ad levels"]]
         self.owned_recipes = {self.recipes[0]}
