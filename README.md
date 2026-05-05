@@ -36,7 +36,7 @@ How to run the program from the command line.
 # Attribution
 |  Method/Function | Primary Author | Technique Demonstrated |
 | ---------------  | -------------- | ---------------------- |
-| `day_profit`     | Sarayu Vanam   | technique              |
+| `day_profit`     | Sarayu Vanam   | Optional arguments     |
 | `__str__`        | Angela Kyuk    | Magic method           |
 | `__init__`       | Angela Kyuk    |Dictionary comprehension|
 | `check_item`     | Ethan Gustave  | Conditional Expression | 

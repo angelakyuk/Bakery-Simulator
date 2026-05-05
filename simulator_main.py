@@ -311,28 +311,41 @@ class Game:
           )
         self.prompt_request()
     
-    def day_profit(self, customerpath):
+    def day_profit(self, customerpath, show_stats = True, expense_rate = None):
+        """
+        Calculates the revenue, expenses, and profits for the day.
+        
+        Args:
+            customerpath:
+            show_stats: Determines if all the stats should be printed.
+            expense_rate: A set amount of money going towards expenses.
+        """
+        
         current_level = list(self.ad_level)[0]
         num_customers = self.gamedata["Ad levels"][current_level]
         customers = create_customers(num_customers, customerpath)
         revenue = 0
             
-        for i in range(num_customers):
+        for c in customers:
             current_dish = random.choice(list(self.owned_recipes))
             selling_price = self.gamedata["Selling prices"][current_dish]
             score = handle_dish(current_dish, self.owned_recipes, c)
             revenue += (selling_price * (score / 2))
-            expenses = round(revenue * random.rand(), 2)
-
+        
+        if expense_rate is None:
+            expense_rate = random.randint(0,5)
+            
+        expenses = round(revenue * random.rand(), 2)
         daily_profit = revenue - expenses
         self.profit += daily_profit
 
-        print("------ Today's Stats ------")
-        print(f"Customers served: {len(customers)}")
-        print(f"Revenue: ${round(revenue, 2)}")
-        print(f"Expenses: ${expenses}")
-        print(f"Daily profit: ${round(daily_profit, 2)}")
-        print(f"Total profit: ${round(self.profit, 2)}")
+        if show_stats:
+            print("------ Today's Stats ------")
+            print(f"Customers served: {len(customers)}")
+            print(f"Revenue: ${round(revenue, 2)}")
+            print(f"Expenses: ${expenses}")
+            print(f"Daily profit: ${round(daily_profit, 2)}")
+            print(f"Total profit: ${round(self.profit, 2)}")
     
     def run_shop(self):
         
