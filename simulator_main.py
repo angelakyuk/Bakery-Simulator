@@ -35,7 +35,7 @@ class Shop:
             price for the player and the number of customers they'll serve at 
             that level.
     """
-    def __init__(self, shop_path):
+    def __init__(self, shop_path, unlocked_items = {}, unlocked_ad = {}):
         """Initialize ShopData object.
         
         Args:
@@ -53,8 +53,20 @@ class Shop:
         self.ad_levels = [a for a in self.shopdata["Ad levels"]]
         all_shop = self.recipes.extend(self.ad_levels)
         self.unlockable = {i : "Locked" for i in all_shop}
-        self.unlockable["Sugar cookies"] = "Owned"
-        self.unlockable["Level 1"] = "Owned"
+        if unlocked_items == {}: # <
+            self.unlockable["Sugar cookies"] = "Owned" # <
+        else: # <
+            for i in unlocked_items: # <
+                self.unlockable[i] = "Owned" # <
+        if unlocked_ad == {}: # <
+            self.unlockable["Level 1"] = "Owned" # <
+        else: # <
+            self.unlockable["Level 1"] = "" # <
+            self.unlockable["Level 2"] = "" # <
+            self.unlockable["Level 3"] = "" # <
+            self.unlockable[list(unlocked_ad)[0]] = "Owned" # <
+        # Added these lines so the shop knows what's already unlocked when
+        # the player opens it up
         self.recipe_shop = {r : (self.shopdata["Recipe prices"][r], 
                                  self.shopdata["Selling prices"][r]) 
                             for r in self.recipes}
@@ -246,8 +258,7 @@ class Game:
             print("------ Your Recipes ------\n"
                 f"{recipes.join('\n')}")
         elif request == 'shop':
-        # shop function
-            pass
+            self.run_shop()
         elif request == 'continue':
             self.day_profit()
         elif request == 'end game':
@@ -320,6 +331,31 @@ class Game:
         print(f"Expenses: ${expenses}")
         print(f"Daily profit: ${round(daily_profit, 2)}")
         print(f"Total profit: ${round(self.profit, 2)}")
+    
+    def run_shop(self):
+        
+        shop = Shop(self.gamedata, self.owned_recipes, self.ad_level)
+        
+        player_in = input(
+            """What would you like to do?
+            Options: buy, leave"""
+        )
+        
+        if player_in == "buy":
+            item = input("What would you like to purchase?")
+            if shop.check_item(item):
+                if shop.get_price(item) <= self.gamedata.profit:
+                    print(shop.buy_item(item))
+                else:
+                    print("You can't afford this item.\n")
+            else:
+                print("We don't have this item.\n")
+            self.run_shop(shop, self.gamedata)
+        
+        if player_in == "leave":
+            print("Thanks for stopping by!\n")
+    # Moved this method to the Game class and made small edits because it would 
+    # be annoying to impleemnt otherwise
 
 #Sarayu Vanam's function
 def handle_unlocks(money, recipes):
@@ -346,26 +382,7 @@ def handle_unlocks(money, recipes):
 
 #Ethan Gustave's Function
 
-def run_shop(shop, gamedata):
-    print(shop)
-    player_in = input(
-        """What would you like to do?
-        Options: buy, leave"""
-    )
-    
-    if player_in == "buy":
-        item = input("What would you like to purchase?")
-        if shop.check_item(item):
-            if shop.get_price(item) <= gamedata.profit:
-                print(shop.buy_item(item))
-            else:
-                print("You can't afford this item.\n")
-        else:
-            print("We don't have this item.\n")
-        run_shop(shop, gamedata)
-    
-    if player_in == "leave":
-        print("Thanks for stopping by!\n")
+
     
     
 from random import choice
@@ -458,5 +475,7 @@ def rateDish(user_list, correct_list):
     return 0  # placeholder
 
 
-def main(filepath, customerpath, shoppath):
+def main(filepath, customerpath):
     game = Game(filepath)
+    
+    game.prompt_request()
