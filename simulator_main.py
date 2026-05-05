@@ -88,11 +88,21 @@ class Shop:
         
     #Shop methods below by Ethan Gustave
     
+    def get_price(self, item_name):
+        """Gets price of item given the item name.
+        
+        Args: 
+            item_name(str): name of the item whose price is to be checked.
+            
+        Returns: 
+            the price of the item."""
+        return(self.recipe_shop(item_name[1]))
+    
     def owned(self, item_name):
         """Checks if item is owned.
             
-            Takes:
-                item_name: the name of the item to be checked
+            Args:
+                item_name(str): the name of the item to be checked
             Returns:
                 True if item is owned, otherwise returns False.
             """
@@ -104,8 +114,8 @@ class Shop:
     def check_item(self, item_name):
         """Checks if item request is valid. 
             
-            Takes:
-                item_name: the name of the item to be bought
+            Args:
+                item_name(str): the name of the item to be bought
             Returns:
                 True if valid, otherwise returns False.
             
@@ -134,15 +144,12 @@ class Shop:
         
         if(item_name in self.unlockable):
             if(self.unlockable[item_name] == "Owned"):
-                print("You already own this!\n")
-                return False
+                return("You already own this!\n")
             else:
                 self.unlockable[item_name] == "Owned"
-                print("Thank you for your business!")
-                return True
+                return("Thank you for your business!\n")
         else:
-            print("We don't have this item.")
-            return False
+            return("We don't have this item.\n")
 
 class Game:
     """GameState
@@ -304,8 +311,28 @@ def handle_unlocks(money, recipes):
     return recipes
 
 #Ethan Gustave's Function
-from random import choice
 
+def run_shop(shop, gamedata):
+    print(shop)
+    player_in = input(
+        """What would you like to do?
+        Options: buy, leave"""
+    )
+    if(player_in == "buy"):
+        item = input("What would you like to purchase?")
+        if(shop.check_item(item)):
+            if(shop.get_price(item) <= gamedata.profit):
+                print(shop.buy_item(item))
+            else:
+                print("You can't afford this item.\n")
+        else:
+            print("We don't have this item.\n")
+        run_shop(shop, gamedata)
+    if(player_in == "leave"):
+        print("Thanks for stopping by!\n")
+    
+    
+from random import choice
 
 def create_customers(num, customer_path):
     """Creates a list of customers from the amount specified for the day
