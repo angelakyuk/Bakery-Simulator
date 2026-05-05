@@ -23,7 +23,7 @@ class Shop:
                 prices. The keys are ad levels and the values are the 
                 corresponding price.
         recipes (list of str): A list of all recipe names.
-        ad_levels (list of str): A list of all ad levels.
+        ad_levels (list of str): A list of all ad level titles.
         unlockable (dict of {str:str}): A dictionary of the lock status of shop
             items. Keys are recipe or ad level names. Values are "Locked",
             "Owned", or an empty string "".
@@ -322,6 +322,7 @@ class Game:
         print(f"Expenses: ${expenses}")
         print(f"Daily profit: ${round(daily_profit, 2)}")
         print(f"Total profit: ${round(self.profit, 2)}")
+        # return(self.daily_profit)
 
 #Sarayu Vanam's function
 def handle_unlocks(money, recipes):
