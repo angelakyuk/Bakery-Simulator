@@ -163,18 +163,15 @@ class Shop:
         
         if item_name in self.unlockable:
             if self.unlockable[item_name] == "Owned":
-                return("You already own this!\n")
+                pass
             else:
                 if item_name in self.recipes:
                     self.unlockable[item_name] == "Owned"
-                    return("Thank you for your business!\n")
                 if item_name in self.ad_levels:
                     self.unlockable["Level 1"] = ""
                     self.unlockable["Level 2"] = ""
                     self.unlockable["Level 3"] = ""
                     self.unlockable[item_name] = "Owned"
-        else:
-            return("We don't have this item.\n")
 
 class Game:
     """GameState
@@ -354,7 +351,10 @@ class Game:
             item = input("What would you like to purchase?")
             if shop.check_item(item):
                 if shop.get_price(item) <= self.gamedata.profit:
-                    print(shop.buy_item(item))
+                    if self.profit >= shop.get_price(item):
+                        self.unlock_item(item)
+                        shop.buy_item(item)
+                        print("Thank you for your business!\n")
                 else:
                     print("You can't afford this item.\n")
             else:
