@@ -322,11 +322,11 @@ class Game:
             expenses += round(revenue * random.rand(), 2)
         # alternative dish code that implements handle_dish and create_customer
         
-        for i in range(num_customers):
-            current_dish = random.choice(list(self.owned_recipes))
-            selling_price = self.gamedata["Selling prices"][current_dish]
-            revenue += selling_price
-            expenses = round(revenue * random.rand(), 2)
+        # for i in range(num_customers):
+        #     current_dish = random.choice(list(self.owned_recipes))
+        #     selling_price = self.gamedata["Selling prices"][current_dish]
+        #     revenue += selling_price
+        #     expenses = round(revenue * random.rand(), 2)
 
         daily_profit = revenue - expenses
         self.profit += daily_profit
