@@ -186,8 +186,15 @@ class Game:
                     
         Side effects: Sets attributes owned_recipes, ad_level, and profit.
         """
-        self.owned_recipes = {self.recipes[0]}
-        self.ad_level = {self.ad_levels[0]}
+        with open(gamedata, 'r') as f:
+            self.gamedata = json.load(f)
+            self.gamedata = dict(self.gamedata)
+        
+        self.owned_recipes = {[r for r in self.gamedata["Recipes"]][0]}# <
+        self.ad_level = {[a for a in self.gamedata["Ad levels"]][0]}# <
+        # These 2 lines were making references to Shop attributes as if they
+        # were attributes of Game, changed so they would operate independent
+        # of Shop.
         self.profit = 0
         
     def valid_request(self, request):
@@ -331,17 +338,19 @@ def run_shop(shop, gamedata):
         """What would you like to do?
         Options: buy, leave"""
     )
-    if(player_in == "buy"):
+    
+    if player_in == "buy":
         item = input("What would you like to purchase?")
-        if(shop.check_item(item)):
-            if(shop.get_price(item) <= gamedata.profit):
+        if shop.check_item(item):
+            if shop.get_price(item) <= gamedata.profit:
                 print(shop.buy_item(item))
             else:
                 print("You can't afford this item.\n")
         else:
             print("We don't have this item.\n")
         run_shop(shop, gamedata)
-    if(player_in == "leave"):
+    
+    if player_in == "leave":
         print("Thanks for stopping by!\n")
     
     
@@ -434,5 +443,5 @@ def rateDish(user_list, correct_list):
     return 0  # placeholder
 
 
-def main(filepath):
+def main(filepath, customerpath, shoppath):
     game = Game(filepath)
