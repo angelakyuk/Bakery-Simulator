@@ -243,7 +243,7 @@ class Game:
             else:
                 return 'invalid'
             
-    def fulfill_request(self, request):
+    def fulfill_request(self, request, customerdata):
         """Carry out the player's menu option request.
     
         Args:
@@ -260,12 +260,12 @@ class Game:
         elif request == 'shop':
             self.run_shop()
         elif request == 'continue':
-            self.day_profit()
+            self.day_profit(customerdata)
         elif request == 'end game':
             print("Thanks for playing!")
             quit()
             
-    def prompt_request(self):
+    def prompt_request(self, customerdata):
         """Prompt player for menu option requests and carry them out.
     
         Side effects:
@@ -284,7 +284,7 @@ class Game:
             print("That's not a valid menu option. Try again!")
             request = input(menu_options)
             validated = self.valid_request(request.lower())
-        self.fulfill_request(validated)
+        self.fulfill_request(validated, customerdata)
         more = input("Would you like to select another menu option? (Y/N). ")
         while more.lower() not in ('y', 'n'):
             print("That's not a valid option. Try again!")
@@ -292,7 +292,7 @@ class Game:
         if more.lower() == 'y':
             self.prompt_request()
         elif more.lower() == 'n':
-            self.fulfill_request('continue')
+            self.fulfill_request('continue', customerdata)
             
     def day_end(self):
         """Display end of day stats and prompt player requests.
@@ -311,11 +311,20 @@ class Game:
           )
         self.prompt_request()
     
-    def day_profit(self):
+    def day_profit(self, customerpath):
         current_level = list(self.ad_level)[0]
         num_customers = self.gamedata["Ad levels"][current_level]
+        customers = create_customers(num_customers, customerpath)
         revenue = 0
-
+        
+        for c in customers:
+            current_dish = random.choice(list(self.owned_recipes))
+            selling_price = self.gamedata["Selling prices"][current_dish]
+            score = handle_dish(current_dish, self.owned_recipes, c)
+            revenue += (selling_price * (score / 2))
+            expenses += round(revenue * random.rand(), 2)
+        # alternative dish code that implements handle_dish and create_customer
+        
         for i in range(num_customers):
             current_dish = random.choice(list(self.owned_recipes))
             selling_price = self.gamedata["Selling prices"][current_dish]
@@ -422,7 +431,7 @@ def create_customers(num, customer_path):
 
 from random import shuffle
 
-def handle_dish(current_dish, recipe_dict):
+def handle_dish(current_dish, recipe_dict, customer_name):
     """
     Handles the playing stage of each dish by giving inputs to the user. Their
     performance is decided by the order in which the ingredients are typed.
@@ -444,7 +453,7 @@ def handle_dish(current_dish, recipe_dict):
     
     shuffled = correct_order[:]
     shuffle(shuffled)
-
+    print(f"{customer_name} walked in!")
     print(f"\n Dish: {current_dish}")
     print("Ingredients (shuffled):")
 
@@ -478,4 +487,4 @@ def rateDish(user_list, correct_list):
 def main(filepath, customerpath):
     game = Game(filepath)
     
-    game.prompt_request()
+    game.prompt_request(customerpath)
