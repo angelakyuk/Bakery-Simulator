@@ -47,3 +47,12 @@ How to run the program from the command line.
 
 
 # Annotated Bibliography
+Built-in Types. (n.d.). Python Documentation. Retrieved May 5, 2026, from https://docs.python.org/3/library/stdtypes.html
+
+This is the official Python website that has descriptions and tutorials for 
+built-in types. I used this website to learn about the join() string method.
+
+Python Join Two Lists. (n.d.). Retrieved May 5, 2026, from https://www.w3schools.com/python/gloss_python_join_lists.asp
+
+This website has tutorials for several coding languages. I specifically used 
+this website to recall ways to join lists in Python.
