@@ -434,7 +434,7 @@ from random import shuffle
 def handle_dish(current_dish, recipe_dict, customer_name):
     """
 
-    Author: Kyle Tice (with csutomer logic from Ethan Gustave)
+    Author: Kyle Tice (with customer logic from Ethan Gustave)
     
     Handles the playing stage of each dish by giving inputs to the user. Their
     performance is decided by the order in which the ingredients are typed.
