@@ -25,8 +25,8 @@ class Shop:
         recipes (list of str): A list of all recipe names.
         ad_levels (list of str): A list of all ad level titles.
         unlockable (dict of {str:str}): A dictionary of the lock status of shop
-            items. Keys are recipe or ad level names. Values are "Locked",
-            "Owned", or an empty string "".
+            items. Keys are recipe or ad level names. Values are "Locked" or
+            "Owned".
         recipe_shop (dict of {str:tuple(int, int)}): A dictionary of recipe
             shop information. Keys are recipe names. Values are tuples of the
             recipe's price for the player and selling price to customers.
@@ -39,10 +39,11 @@ class Shop:
         """Initialize ShopData object.
         
         Args:
-        shop_path: The path to the JSON file that has the game's shop information.
+            shop_path: A path to a JSON file that has shop information.
+        
         Side effects:
-            Set attributes shopdata, recipes, ad_levels, unlockable, recipe_shop, 
-                and ad_shop.
+            Sets the attributes shopdata, recipes, ad_levels, unlockable, 
+                recipe_shop, and ad_shop.
         """
         with open(shop_path, 'r') as f:
             self.shopdata = json.load(f)
@@ -75,16 +76,17 @@ class Shop:
                         for a in self.ad_levels}
         
     def __str__(self):
-        """Provide an informal string representation for the game's shop, which
-        includes recipes and ad levels.
+        """Provide an informal string representation for the game's shop.
 
         Returns:
-            str: The informal representation of the game's shop.
+            str: The informal representation of the game's shop, which includes
+                the item's name, purchase price, selling price to customers or 
+                number of customers to serve, and lock status.
         """
-        recipe_shop = [f"{r}:\n${prices[0]} (P) * ${prices[1]} (S) * {self.unlockable[r]}\n" 
-                       for r, prices in self.recipe_shop.items()]
-        ad_shop = [f"{a}:\n${info[0]} (P) * {info[1]} (C) * {self.unlockable[a]}\n"
-                   for a, info in self.ad_shop.items()]
+        recipe_shop = [f"{r}:\n(P) ${p[0]} * (S) ${p[1]} * {self.unlockable[r]}\n" 
+                       for r, p in self.recipe_shop.items()]
+        ad_shop = [f"{a}:\n(P) ${i[0]} * (C) {i[1]} * {self.unlockable[a]}\n"
+                   for a, i in self.ad_shop.items()]
         return (f"------ Recipe Shop ------\n"
                 f"Recipe Price (P) | Selling Price (S) | Lock Status\n\n"
                 f"{'\n'.join(recipe_shop)}"
@@ -167,25 +169,27 @@ class Shop:
                     self.unlockable["Level 3"] = ""
                     self.unlockable[item_name] = "Owned"
 
-class Game(Shop):
-    """GameState
+class Game:
+    """Play Bakery Simulator.
     
     Attributes:
-            owned_recipes (dict of {str:list[str]}): A dictionary of recipes the
-                player owns. Keys are recipe names. Values are the recipe's 
-                ingredients.
-            ad_level (dict of {str:int}): A dictionary of the player's current 
-                ad level. The key is the ad level (e.g. "Level 1"). The value is
-                the number of customers they will serve.
-            profit (int): How much money the player currently has.
+        owned_recipes (dict of {str:list[str]}): A dictionary of recipes the
+            player owns. Keys are recipe names. Values are the recipe's 
+            ingredients.
+        ad_level (dict of {str:int}): A dictionary of the player's current 
+            ad level. The key is the ad level (e.g. "Level 1"). The value is
+            the number of customers they will serve.
+        profit (int): How much money the player currently has.
     """
-    def __init__(self):
+    def __init__(self, path):
         """_summary_
                     
         Side effects: Sets attributes owned_recipes, ad_level, and profit.
         """
-        self.owned_recipes = {"Sugar cookies":self.shopdata["Recipes"]["Sugar cookies"]}
-        self.ad_level = {"Level 1":self.shopdata["Ad Levels"]["Level 1"]}
+        self.shop = Shop(path)
+        self.owned_recipes = {"Sugar cookies":self.shop.shopdata["Recipes"]
+                              ["Sugar cookies"]}
+        self.ad_level = {"Level 1":self.shop.shopdata["Ad Levels"]["Level 1"]}
         self.profit = 0
         
     def unlock_item(self, item_name):
@@ -197,10 +201,10 @@ class Game(Shop):
         Side Effects:
             Modifies owned_recipes and ad_level attributes.
         """
-        if item_name in self.shopdata["Recipes"]:
-            self.owned_recipes[item_name] = self.shopdata["Recipes"][item_name]
-        elif item_name in self.shopdata["Ad levels"]:
-            self.ad_level = {item_name : self.shopdata["Ad Levels"][item_name]}
+        if item_name in self.shop.shopdata["Recipes"]:
+            self.owned_recipes[item_name] = self.shop.shopdata["Recipes"][item_name]
+        elif item_name in self.shop.shopdata["Ad levels"]:
+            self.ad_level = {item_name : self.shop.shopdata["Ad Levels"][item_name]}
     # Added unlock functionality to Game class so owned_recipes and ad_level had
     # functionality within the game -Ethan
             
@@ -215,11 +219,10 @@ class Game(Shop):
             str: The player's input if it's valid. If the input is invalid, 
                 returns 'invalid'.
         """
-        valid_requests = ('shop', 'recipes', 'continue', 'end game')
         if not isinstance(request, str):
             return 'invalid'
         else:
-            if request in valid_requests:
+            if request in ('shop', 'recipes', 'continue', 'end game'):
                 return request
             else:
                 return 'invalid'
@@ -239,7 +242,7 @@ class Game(Shop):
             print("------ Your Recipes ------\n"
                 f"{'\n'.join(recipes)}")
         elif request == 'shop':
-            print(self)
+            print(self.shop)
             self.run_shop()
         elif request == 'continue':
             self.day_profit(customerdata)
@@ -288,6 +291,7 @@ class Game(Shop):
         expenses = round(self.profit * random.rand(), 2)
         print("------ Today's Stats ------\n"
           f"Total customers: {self.ad_level}\n"
+          f"Daily profit: {self.daily_profit}"
           f"Expenses: ${expenses}\n"
           f"Current profit: ${round(self.profit - expenses, 2)}\n"
           )
@@ -295,13 +299,15 @@ class Game(Shop):
     
     def day_profit(self, customerpath):
         current_level = list(self.ad_level)[0]
+        # 3
         num_customers = self.gamedata["Ad levels"][current_level]
+        # 3
         customers = create_customers(num_customers, customerpath)
         revenue = 0
         
         for c in customers:
             current_dish = random.choice(list(self.owned_recipes))
-            selling_price = self.gamedata["Selling prices"][current_dish]
+            selling_price = self.shop.shopdata["Selling prices"][current_dish]
             score = handle_dish(current_dish, self.owned_recipes, c)
             revenue += (selling_price * (score / 2))
             expenses += round(revenue * random.rand(), 2)
@@ -336,8 +342,8 @@ class Game(Shop):
         if player_in == "buy":
             item = input("What would you like to purchase?")
             if shop.check_item(item):
-                if shop.get_price(item) <= self.gamedata.profit:
-                    if self.profit >= shop.get_price(item):
+                if self.shop.get_price(item) <= self.profit:
+                    if self.profit >= self.shop.get_price(item):
                         self.unlock_item(item)
                         shop.buy_item(item)
                         print("Thank you for your business!\n")
@@ -345,7 +351,8 @@ class Game(Shop):
                     print("You can't afford this item.\n")
             else:
                 print("We don't have this item.\n")
-            self.run_shop(shop, self.gamedata)
+            self.run_shop(shop, self.shop.shopdata)
+            # is this to execute run_shop again
         
         if player_in == "leave":
             print("Thanks for stopping by!\n")
