@@ -51,10 +51,6 @@ class Shop:
         
         self.recipes = [r for r in self.shopdata["Recipes"]]
         self.ad_levels = [a for a in self.shopdata["Ad levels"]]
-        self.owned_recipes = {self.recipes[0]} # <
-        self.ad_level = {self.ad_levels[0]} # <
-        # i think we should keep these two in Game so that this class has general shop
-        # info and Game has the player's stats, like owned recipes/ad level and their profit
         all_shop = self.recipes.extend(self.ad_levels)
         self.unlockable = {i : "Locked" for i in all_shop}
         self.unlockable["Sugar cookies"] = "Owned"
@@ -73,13 +69,16 @@ class Shop:
         Returns:
             str: The informal representation of the game's shop.
         """
-        recipe_shop = [f"{r} | {prices[0]} | {prices[1]} | {"Owned" if r in 
-                       self.owned_recipes else "Locked"}" 
-                       for r, prices in self.recipe_shop.items()]
-        ad_shop = [f"{a} | {prices[0]} | {prices[1]} | {"Current" if a in 
-                   self.ad_level.keys() else ""}"
+        recipe_shop = [f"{r} | {prices[0]} | {prices[1]} | {"Owned" if 
+                       self.owned(r) else "Locked"}" 
+                       for r, prices in self.recipe_shop.items()] # <
+        ad_shop = [f"{a} | {prices[0]} | {prices[1]} | {"Current" if 
+                   self.owned(a) else ""}"
                    # self.ad_level is the player's current ad level
-                   for a, prices in self.ad_shop.items()]
+                   for a, prices in self.ad_shop.items()] # <
+        # Changed two lines above so that they operate without the self.ad_level
+        # and self.owned_recipes attributes, moved mentioned attributes to 
+        # Game class.
         return (f"------ Recipe Shop ------\n"
                 f"Recipe | Purchase Price | Selling Price | Lock Status\n"
                 f"{recipe_shop.join('\n')}"
