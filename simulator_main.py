@@ -197,6 +197,22 @@ class Game:
         # of Shop.
         self.profit = 0
         
+    def unlock_item(self, item_name):
+        """Unlocks an item.
+        
+        Args: 
+            item_name:
+                the name of the item to be unlocked.
+        Side Effects:
+            Modifies owned_recipes and ad_level attributes.
+        """
+        if item_name in self.gamedata["Recipes"]:
+            self.owned_recipes[item_name] = self.gamedata["Recipes"][item_name]
+        elif item_name in self.gamedata["Ad levels"]:
+            self.ad_level = {item_name : self.gamedata["Ad Levels"][item_name]}
+    # Added unlock functionality to Game class so owned_recipes and ad_level had
+    # functionality within the game -Ethan
+            
     def valid_request(self, request):
         """Ensure that the player's input for a menu option request is valid.
     
