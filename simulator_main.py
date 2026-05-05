@@ -155,8 +155,14 @@ class Shop:
             if self.unlockable[item_name] == "Owned":
                 return("You already own this!\n")
             else:
-                self.unlockable[item_name] == "Owned"
-                return("Thank you for your business!\n")
+                if item_name in self.recipes:
+                    self.unlockable[item_name] == "Owned"
+                    return("Thank you for your business!\n")
+                if item_name in self.ad_levels:
+                    self.unlockable["Level 1"] = ""
+                    self.unlockable["Level 2"] = ""
+                    self.unlockable["Level 3"] = ""
+                    self.unlockable[item_name] = "Owned"
         else:
             return("We don't have this item.\n")
 
