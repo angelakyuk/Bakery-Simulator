@@ -75,10 +75,10 @@ class Shop:
         Returns:
             str: The informal representation of the game's shop.
         """
-        recipe_shop = [f"{r} | {prices[0]} | {prices[1]} | {"Owned" if r in 
+        recipe_shop = [f"{r} | ${prices[0]} | ${prices[1]} | {"Owned" if r in 
                        self.owned_recipes else "Locked"}" 
                        for r, prices in self.recipe_shop.items()]
-        ad_shop = [f"{a} | {prices[0]} | {prices[1]} | {"Current" if a in 
+        ad_shop = [f"{a} | ${prices[0]} | ${prices[1]} | {"Current" if a in 
                    self.ad_level.keys() else ""}"
                    # self.ad_level is the player's current ad level
                    for a, prices in self.ad_shop.items()]
@@ -424,6 +424,7 @@ def handle_dish(current_dish, recipe_dict):
 
     
     score = rateDish(user_list, correct_order)
+    # if rateDish is a function, shouldn't it be named rate_dish?
 
     print(f"\n⭐ You scored: {score}/4")
 
