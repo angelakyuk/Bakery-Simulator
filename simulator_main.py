@@ -316,7 +316,8 @@ class Game:
         Calculates the revenue, expenses, and profits for the day.
         
         Args:
-            customerpath:
+            customerpath: The path of the text file to be used to import
+            customer names.
             show_stats: Determines if all the stats should be printed.
             expense_rate: A set amount of money going towards expenses.
         """
