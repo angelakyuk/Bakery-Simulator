@@ -43,7 +43,7 @@ How to run the program from the command line.
 | `check_item`     | Ethan Gustave  | Conditional Expression | 
 | `create_customer`| Ethan Gustave  | `with` statement       |
 | `handle_dish`    | Kyle Tice      | f-strings              |
-| `rate_dish`      | Kyle Tice      | key lamba with sort    |
+| `rate_dish`      | Kyle Tice      | key lambda with sort    |
 
 
 # Annotated Bibliography
