@@ -16,22 +16,49 @@ class Shop:
         unlockable (dict of {str:str}): A dictionary of the lock status of shop
             items. Keys are recipe or ad level names. Values are "Locked",
             "Owned", or and empty string "".
+        gamedata (dict): A dictionary with the following keys:
+                - "Recipes" (dict of {str:list[str]}): A dictionary of recipe 
+                    ingredients. The keys are recipe names and the values are a
+                    list of ingredients.
+                - "Recipe prices" (dict of {str:int}): A dictionary of recipe 
+                    prices for the player. The keys are recipe names and the 
+                    values are the corresponding price.
+                - "Selling prices" (dict of {str:int}): A dictionary of selling
+                    prices of baked goods to customers. The keys are recipe
+                    names and the values are the corresponding selling price.
+                - "Ad levels" (dict of {str:int}): A dictionary of ad level 
+                    information. The keys are ad levels and the values are the
+                    number of customers the player will serve at that level.
+                - "Ad prices" (dict of {str:int}): A dictionary of ad level 
+                    prices. The keys are ad levels and the values are the 
+                    corresponding price.
     """
-    def __init__(self):
-        """Initialize Shop object.
-            
+    def __init__(self, shop_path):
+        
+        """Initialize ShopData object.
+        Args:
+            shop_path: The path to the file which populates the ShopData object.
         Side effects:
             Set attributes unlockable, recipe_shop, and ad_shop.
         """
+        
+        with open(shop_path, 'r') as f:
+            shopdata = json.load(f)
+        
+        self.recipes = [r for r in shopdata["Recipes"]]
+        self.ad_levels = [a for a in shopdata["Ad levels"]]
+        self.owned_recipes = {self.recipes[0]}
+        self.ad_level = {self.ad_levels[0]}
+        
         all_shop = self.recipes.extend(self.ad_levels)
         self.unlockable = {i : "Locked" for i in all_shop}
         self.unlockable["Sugar cookies"] = "Owned"
         self.unlockable["Level 1"] = "Owned"
-        self.recipe_shop = {r : (self.gamedata["Recipe prices"][r], 
-                                 self.gamedata["Selling prices"][r]) 
+        self.recipe_shop = {r : (self.shopdata["Recipe prices"][r], 
+                                 self.shopdata["Selling prices"][r]) 
                             for r in self.recipes}
-        self.ad_shop = {a : (self.gamedata["Ad prices"][a], 
-                             self.gamedata["Ad levels"][a]) 
+        self.ad_shop = {a : (self.shopdata["Ad prices"][a], 
+                             self.shopdata["Ad levels"][a]) 
                         for a in self.ad_levels}
         
     def __str__(self):
@@ -41,22 +68,81 @@ class Shop:
         Returns:
             str: The informal representation of the game's shop.
         """
-        recipe_shop = [f"{r} | {prices[0]} | {prices[1]} | {"Owned" if r in 
+        recipe_shop = [f"{r} \t {prices[0]} \t {prices[1]} \t {"Owned" if r in 
                        self.owned_recipes else "Locked"}" 
                        for r, prices in self.recipe_shop.items()]
         
-        ad_shop = [f"{a} | {prices[0]} | {prices[1]} | {"Current" if a in 
-                   self.ad_level else " "}"
+        ad_shop = [f"{a} \t {prices[0]} \t {prices[1]} \t {"Current" if a in 
+                   self.owned else " "}"
                    for a, prices in self.ad_shop.items()]
         return (f"------ Recipe Shop ------\n"
-                f"Recipe | Purchase Price | Selling Price | Lock Status\n"
+                f"Recipe \t Purchase Price \t Selling Price \t Lock Status\n"
                 f"{recipe_shop.join('\n')}"
                 '*Note: "Selling Price" is what your customers will pay.\n'
                 f"------ Ad Level Shop ------\n"
-                f"Ad Level | Purchase Price | Customers | Lock Status"
+                f"Ad Level \t Purchase Price \t Customers \t Lock Status"
                 f"{ad_shop.join('\n')}"
-                '''*Note: "Customers" is how many customers you'll serve in a day.\n'''
+                #'''*Note: "Customers" is how many customers you'll serve in'''
+                #'''a day.\n'''
         )
+        
+    #Shop methods below by Ethan Gustave
+    
+    def owned(self, item_name):
+        """Checks if item is owned.
+            
+            Takes:
+                item_name: the name of the item to be checked
+            Returns:
+                True if item is owned, otherwise returns False.
+            """
+        if(self.unlockable[item_name] == "Owned"):
+            return True
+        else:
+            return False
+        
+    def check_item(self, item_name):
+        """Checks if item request is valid. 
+            
+            Takes:
+                item_name: the name of the item to be bought
+            Returns:
+                True if valid, otherwise returns False.
+            
+            """
+        if(item_name in self.recipe_shop):
+            return True
+        elif(item_name in self.ad_shop):
+            return True
+        else:
+            return False
+    
+    def buy_item(self, item_name):
+        """Attempts to buy an item from the shop.
+        
+        Takes:
+            item_name: the name of the item to be bought
+        Returns:
+            True: If the item is bought
+            False: if the item name isn't valid or the item is already unlocked.
+        Side Effects: 
+            - Prints to console depending on result of method
+            - Changes unlockable dictionary entry from "Locked" to "Owned" if
+                item is bought.
+        
+        """
+        
+        if(item_name in self.unlockable):
+            if(self.unlockable[item_name] == "Owned"):
+                print("You already own this!\n")
+                return False
+            else:
+                self.unlockable[item_name] == "Owned"
+                print("Thank you for your business!")
+                return True
+        else:
+            print("We don't have this item.")
+            return False
 
 class Game:
     """GameState
@@ -217,6 +303,7 @@ def handle_unlocks(money, recipes):
 
 #Ethan Gustave's Function
 from random import choice
+
 
 def create_customers(num, customer_path):
     """Creates a list of customers from the amount specified for the day
