@@ -42,5 +42,8 @@ How to run the program from the command line.
 | `__init__`       | Angela Kyuk    |Dictionary comprehension|
 | `check_item`     | Ethan Gustave  | Conditional Expression | 
 | `create_customer`| Ethan Gustave  | `with` statement       |
+| `handle_dish`    | Kyle Tice      | f-strings              |
+| `rate_dish`      | Kyle Tice      | key lamba with sort    |
+
 
 # Annotated Bibliography
