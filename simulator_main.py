@@ -433,6 +433,9 @@ from random import shuffle
 
 def handle_dish(current_dish, recipe_dict, customer_name):
     """
+
+    Author: Kyle Tice (with csutomer logic from Ethan Gustave)
+    
     Handles the playing stage of each dish by giving inputs to the user. Their
     performance is decided by the order in which the ingredients are typed.
 
@@ -445,11 +448,13 @@ def handle_dish(current_dish, recipe_dict, customer_name):
     
     Returns:
         score (int): the score of the dish the user just created
+    
+    Technique:
+        f-strings
     """
 
-    
+    # defines the correct order of ingredients
     correct_order = recipe_dict[current_dish]
-
     
     shuffled = correct_order[:]
     shuffle(shuffled)
@@ -457,7 +462,7 @@ def handle_dish(current_dish, recipe_dict, customer_name):
     print(f"\n Dish: {current_dish}")
     print("Ingredients (shuffled):")
 
-    
+    # builds the user-inputted list of ingredients
     for ingredient in shuffled:
         print(f"- {ingredient}")
 
@@ -471,17 +476,56 @@ def handle_dish(current_dish, recipe_dict, customer_name):
         user_list.append(user_input)
 
     
-    score = rateDish(user_list, correct_order)
-    # if rateDish is a function, shouldn't it be named rate_dish?
+    score = rate_dish(user_list, correct_order)
+   
 
-    print(f"\n⭐ You scored: {score}/4")
+    print(f"\nYou scored: {score}/4")
 
     return score
 
 
+def rate_dish(user_list, correct_list):
+    """
 
-def rateDish(user_list, correct_list):
-    return 0  # placeholder
+    Author: Kyle Tice
+    
+    Rates the dish the user just created by checking the positions of all user
+    inputted ingredients in comparison to the correct list of ingredients.
+
+    Args: 
+        user_list (list of str): the list of ingredients the user typed
+        correct_list (list of str): the correct list of ingredients for the dish
+
+    Side Effects:
+        prints outputs directly to the user with print() statements
+    
+    Returns:
+        score (int): the score of the dish the user just created
+    
+    Technique:
+        key lambda with sorting
+    """
+    # ranks ingredients so that correct ones are listed first
+    ranked = sorted(
+        user_list,
+        key=lambda x: (
+            x not in correct_list,  # False (correct) comes before True (incorrect)
+            correct_list.index(x) if x in correct_list else float('inf')
+        )
+    )
+
+    # displays the ranking of the user's ingredients
+    print("\n Ranked ingredients (best to worst):")
+    for item in ranked:
+        print(f"- {item}")
+
+    # score based on correct position
+    score = sum(
+        1 for i in range(len(correct_list))
+        if i < len(user_list) and user_list[i] == correct_list[i]
+    )
+
+    return score
 
 
 def main(filepath, customerpath):
