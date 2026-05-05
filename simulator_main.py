@@ -131,10 +131,8 @@ class Shop:
             """
         if item_name in self.recipe_shop:
             return True
-        elif item_name in self.ad_shop:
-            return True
         else:
-            return False
+            return True if item_name in self.ad_shop else False
     
     def buy_item(self, item_name):
         """Attempts to buy an item from the shop.
