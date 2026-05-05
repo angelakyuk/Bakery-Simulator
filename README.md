@@ -34,11 +34,16 @@ draft written by Angela Kyuk and edited by Ethan Gustave.
 How to run the program from the command line.
 
 # Attribution
-| Method/Function | Primary Author | Technique Demonstrated |
-| --------------- | -------------- | ---------------------- |
-| `handle_unlocks` | Sarayu Vanam | Conditional expression |
-| `day_profit` | Sarayu Vanam | technique |
-| `__str__` | Angela Kyuk | Magic method |
-| `__init__` | Angela Kyuk | Dictionary comprehension |
+|  Method/Function | Primary Author | Technique Demonstrated |
+| ---------------  | -------------- | ---------------------- |
+| `handle_unlocks` | Sarayu Vanam   | Conditional expression |
+| `day_profit`     | Sarayu Vanam   | technique              |
+| `__str__`        | Angela Kyuk    | Magic method           |
+| `__init__`       | Angela Kyuk    | Dictionary comprehension|
+| `check_item`     | Ethan Gustave  | Conditional Expression | 
+| `create_customer`| Ethan Gustave  | `with` statement       |
+| `handle_dish`    | Kyle Tice      | f-strings              |
+| `rate_dish`      | Kyle Tice      | key lambda with sort    |
+
 
 # Annotated Bibliography

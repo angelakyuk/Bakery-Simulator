@@ -35,7 +35,7 @@ class Shop:
             price for the player and the number of customers they'll serve at 
             that level.
     """
-    def __init__(self, shop_path):
+    def __init__(self, shop_path, unlocked_items = {}, unlocked_ad = {}):
         """Initialize ShopData object.
         
         Args:
@@ -53,8 +53,20 @@ class Shop:
         self.ad_levels = [a for a in self.shopdata["Ad levels"]]
         all_shop = self.recipes.extend(self.ad_levels)
         self.unlockable = {i : "Locked" for i in all_shop}
-        self.unlockable["Sugar cookies"] = "Owned"
-        self.unlockable["Level 1"] = "Owned"
+        if unlocked_items == {}: # <
+            self.unlockable["Sugar cookies"] = "Owned" # <
+        else: # <
+            for i in unlocked_items: # <
+                self.unlockable[i] = "Owned" # <
+        if unlocked_ad == {}: # <
+            self.unlockable["Level 1"] = "Owned" # <
+        else: # <
+            self.unlockable["Level 1"] = "" # <
+            self.unlockable["Level 2"] = "" # <
+            self.unlockable["Level 3"] = "" # <
+            self.unlockable[list(unlocked_ad)[0]] = "Owned" # <
+        # Added these lines so the shop knows what's already unlocked when
+        # the player opens it up
         self.recipe_shop = {r : (self.shopdata["Recipe prices"][r], 
                                  self.shopdata["Selling prices"][r]) 
                             for r in self.recipes}
@@ -131,10 +143,8 @@ class Shop:
             """
         if item_name in self.recipe_shop:
             return True
-        elif item_name in self.ad_shop:
-            return True
         else:
-            return False
+            return True if item_name in self.ad_shop else False
     
     def buy_item(self, item_name):
         """Attempts to buy an item from the shop.
@@ -153,18 +163,15 @@ class Shop:
         
         if item_name in self.unlockable:
             if self.unlockable[item_name] == "Owned":
-                return("You already own this!\n")
+                pass
             else:
                 if item_name in self.recipes:
                     self.unlockable[item_name] == "Owned"
-                    return("Thank you for your business!\n")
                 if item_name in self.ad_levels:
                     self.unlockable["Level 1"] = ""
                     self.unlockable["Level 2"] = ""
                     self.unlockable["Level 3"] = ""
                     self.unlockable[item_name] = "Owned"
-        else:
-            return("We don't have this item.\n")
 
 class Game:
     """GameState
@@ -233,7 +240,7 @@ class Game:
             else:
                 return 'invalid'
             
-    def fulfill_request(self, request):
+    def fulfill_request(self, request, customerdata):
         """Carry out the player's menu option request.
     
         Args:
@@ -248,15 +255,14 @@ class Game:
             print("------ Your Recipes ------\n"
                 f"{recipes.join('\n')}")
         elif request == 'shop':
-        # shop function
-            pass
+            self.run_shop()
         elif request == 'continue':
-            self.day_profit()
+            self.day_profit(customerdata)
         elif request == 'end game':
             print("Thanks for playing!")
             quit()
             
-    def prompt_request(self):
+    def prompt_request(self, customerdata):
         """Prompt player for menu option requests and carry them out.
     
         Side effects:
@@ -275,7 +281,7 @@ class Game:
             print("That's not a valid menu option. Try again!")
             request = input(menu_options)
             validated = self.valid_request(request.lower())
-        self.fulfill_request(validated)
+        self.fulfill_request(validated, customerdata)
         more = input("Would you like to select another menu option? (Y/N). ")
         while more.lower() not in ('y', 'n'):
             print("That's not a valid option. Try again!")
@@ -283,7 +289,7 @@ class Game:
         if more.lower() == 'y':
             self.prompt_request()
         elif more.lower() == 'n':
-            self.fulfill_request('continue')
+            self.fulfill_request('continue', customerdata)
             
     def day_end(self):
         """Display end of day stats and prompt player requests.
@@ -302,27 +308,63 @@ class Game:
           )
         self.prompt_request()
     
-    def day_profit(self):
+    def day_profit(self, customerpath):
         current_level = list(self.ad_level)[0]
         num_customers = self.gamedata["Ad levels"][current_level]
+        customers = create_customers(num_customers, customerpath)
         revenue = 0
-
-        for i in range(num_customers):
+        
+        for c in customers:
             current_dish = random.choice(list(self.owned_recipes))
             selling_price = self.gamedata["Selling prices"][current_dish]
-            revenue += selling_price
-            expenses = round(revenue * random.rand(), 2)
+            score = handle_dish(current_dish, self.owned_recipes, c)
+            revenue += (selling_price * (score / 2))
+            expenses += round(revenue * random.rand(), 2)
+        # alternative dish code that implements handle_dish and create_customer
+        
+        # for i in range(num_customers):
+        #     current_dish = random.choice(list(self.owned_recipes))
+        #     selling_price = self.gamedata["Selling prices"][current_dish]
+        #     revenue += selling_price
+        #     expenses = round(revenue * random.rand(), 2)
 
         daily_profit = revenue - expenses
         self.profit += daily_profit
 
         print("------ Today's Stats ------")
-        print(f"Customers served: {num_customers}")
+        print(f"Customers served: {len(customers)}")
         print(f"Revenue: ${round(revenue, 2)}")
         print(f"Expenses: ${expenses}")
         print(f"Daily profit: ${round(daily_profit, 2)}")
         print(f"Total profit: ${round(self.profit, 2)}")
         # return(self.daily_profit)
+    def run_shop(self):
+        
+        shop = Shop(self.gamedata, self.owned_recipes, self.ad_level)
+        
+        player_in = input(
+            """What would you like to do?
+            Options: buy, leave"""
+        )
+        
+        if player_in == "buy":
+            item = input("What would you like to purchase?")
+            if shop.check_item(item):
+                if shop.get_price(item) <= self.gamedata.profit:
+                    if self.profit >= shop.get_price(item):
+                        self.unlock_item(item)
+                        shop.buy_item(item)
+                        print("Thank you for your business!\n")
+                else:
+                    print("You can't afford this item.\n")
+            else:
+                print("We don't have this item.\n")
+            self.run_shop(shop, self.gamedata)
+        
+        if player_in == "leave":
+            print("Thanks for stopping by!\n")
+    # Moved this method to the Game class and made small edits because it would 
+    # be annoying to impleemnt otherwise
 
 #Sarayu Vanam's function
 def handle_unlocks(money, recipes):
@@ -349,26 +391,7 @@ def handle_unlocks(money, recipes):
 
 #Ethan Gustave's Function
 
-def run_shop(shop, gamedata):
-    print(shop)
-    player_in = input(
-        """What would you like to do?
-        Options: buy, leave"""
-    )
-    
-    if player_in == "buy":
-        item = input("What would you like to purchase?")
-        if shop.check_item(item):
-            if shop.get_price(item) <= gamedata.profit:
-                print(shop.buy_item(item))
-            else:
-                print("You can't afford this item.\n")
-        else:
-            print("We don't have this item.\n")
-        run_shop(shop, gamedata)
-    
-    if player_in == "leave":
-        print("Thanks for stopping by!\n")
+
     
     
 from random import choice
@@ -408,8 +431,11 @@ def create_customers(num, customer_path):
 
 from random import shuffle
 
-def handle_dish(current_dish, recipe_dict):
+def handle_dish(current_dish, recipe_dict, customer_name):
     """
+
+    Author: Kyle Tice (with customer logic from Ethan Gustave)
+    
     Handles the playing stage of each dish by giving inputs to the user. Their
     performance is decided by the order in which the ingredients are typed.
 
@@ -422,19 +448,21 @@ def handle_dish(current_dish, recipe_dict):
     
     Returns:
         score (int): the score of the dish the user just created
+    
+    Technique:
+        f-strings
     """
 
-    
+    # defines the correct order of ingredients
     correct_order = recipe_dict[current_dish]
-
     
     shuffled = correct_order[:]
     shuffle(shuffled)
-
+    print(f"{customer_name} walked in!")
     print(f"\n Dish: {current_dish}")
     print("Ingredients (shuffled):")
 
-    
+    # builds the user-inputted list of ingredients
     for ingredient in shuffled:
         print(f"- {ingredient}")
 
@@ -448,18 +476,59 @@ def handle_dish(current_dish, recipe_dict):
         user_list.append(user_input)
 
     
-    score = rateDish(user_list, correct_order)
-    # if rateDish is a function, shouldn't it be named rate_dish?
+    score = rate_dish(user_list, correct_order)
+   
 
-    print(f"\n⭐ You scored: {score}/4")
+    print(f"\nYou scored: {score}/4")
 
     return score
 
 
+def rate_dish(user_list, correct_list):
+    """
 
-def rateDish(user_list, correct_list):
-    return 0  # placeholder
+    Author: Kyle Tice
+    
+    Rates the dish the user just created by checking the positions of all user
+    inputted ingredients in comparison to the correct list of ingredients.
+
+    Args: 
+        user_list (list of str): the list of ingredients the user typed
+        correct_list (list of str): the correct list of ingredients for the dish
+
+    Side Effects:
+        prints outputs directly to the user with print() statements
+    
+    Returns:
+        score (int): the score of the dish the user just created
+    
+    Technique:
+        key lambda with sorting
+    """
+    # ranks ingredients so that correct ones are listed first
+    ranked = sorted(
+        user_list,
+        key=lambda x: (
+            x not in correct_list,  # False (correct) comes before True (incorrect)
+            correct_list.index(x) if x in correct_list else float('inf')
+        )
+    )
+
+    # displays the ranking of the user's ingredients
+    print("\n Ranked ingredients (best to worst):")
+    for item in ranked:
+        print(f"- {item}")
+
+    # score based on correct position
+    score = sum(
+        1 for i in range(len(correct_list))
+        if i < len(user_list) and user_list[i] == correct_list[i]
+    )
+
+    return score
 
 
-def main(filepath, customerpath, shoppath):
+def main(filepath, customerpath):
     game = Game(filepath)
+    
+    game.prompt_request(customerpath)
