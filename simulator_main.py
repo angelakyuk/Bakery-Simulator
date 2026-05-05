@@ -39,9 +39,7 @@ class Shop:
         """Initialize ShopData object.
         
         Args:
-            shop_path: The path to the file which populates the ShopData object.
-            ### is this the JSON file that has shop data?
-            ### shop_path: The path to the JSON file that has the game's shop information.
+        shop_path: The path to the JSON file that has the game's shop information.
         Side effects:
             Set attributes shopdata, recipes, ad_levels, unlockable, recipe_shop, 
                 and ad_shop.
@@ -53,10 +51,6 @@ class Shop:
         
         self.recipes = [r for r in self.shopdata["Recipes"]]
         self.ad_levels = [a for a in self.shopdata["Ad levels"]]
-        self.owned_recipes = {self.recipes[0]} # <
-        self.ad_level = {self.ad_levels[0]} # <
-        # i think we should keep these two in Game so that this class has general shop
-        # info and Game has the player's stats, like owned recipes/ad level and their profit
         all_shop = self.recipes.extend(self.ad_levels)
         self.unlockable = {i : "Locked" for i in all_shop}
         self.unlockable["Sugar cookies"] = "Owned"
@@ -75,13 +69,16 @@ class Shop:
         Returns:
             str: The informal representation of the game's shop.
         """
-        recipe_shop = [f"{r} | ${prices[0]} | ${prices[1]} | {"Owned" if r in 
-                       self.owned_recipes else "Locked"}" 
-                       for r, prices in self.recipe_shop.items()]
-        ad_shop = [f"{a} | ${prices[0]} | ${prices[1]} | {"Current" if a in 
-                   self.ad_level.keys() else ""}"
+        recipe_shop = [f"{r} | {prices[0]} | {prices[1]} | {"Owned" if 
+                       self.owned(r) else "Locked"}" 
+                       for r, prices in self.recipe_shop.items()] # <
+        ad_shop = [f"{a} | {prices[0]} | {prices[1]} | {"Current" if 
+                   self.owned(a) else ""}"
                    # self.ad_level is the player's current ad level
-                   for a, prices in self.ad_shop.items()]
+                   for a, prices in self.ad_shop.items()] # <
+        # Changed two lines above so that they operate without the self.ad_level
+        # and self.owned_recipes attributes, moved mentioned attributes to 
+        # Game class.
         return (f"------ Recipe Shop ------\n"
                 f"Recipe | Purchase Price | Selling Price | Lock Status\n"
                 f"{recipe_shop.join('\n')}"
@@ -102,7 +99,8 @@ class Shop:
             item_name(str): name of the item whose price is to be checked.
             
         Returns: 
-            the price of the item."""
+            the price of the item.
+        """
         return(self.recipe_shop(item_name[1]))
     
     def owned(self, item_name):
@@ -111,11 +109,12 @@ class Shop:
             Args:
                 item_name(str): the name of the item to be checked
             Returns:
-                True if item is owned, otherwise returns False.
-                # Bool: ?
+                Bool:
+                    True: if item is owned.
+                    False: if item is not owned.
+
             """
-        if(self.unlockable[item_name] == "Owned"):
-        # if self.unlockable[item_name] == "Owned":
+        if self.unlockable[item_name] == "Owned":
             return True
         else:
             return False
@@ -126,14 +125,13 @@ class Shop:
             Args:
                 item_name(str): the name of the item to be bought
             Returns:
-                True if valid, otherwise returns False.
-                # Bool?
-            
+                Bool:
+                    True: if item is valid.
+                    False: if item is invalid.
             """
-        if(item_name in self.recipe_shop):
-        # if item_name in self.recipe_shop:
+        if item_name in self.recipe_shop:
             return True
-        elif(item_name in self.ad_shop):
+        elif item_name in self.ad_shop:
             return True
         else:
             return False
@@ -141,29 +139,30 @@ class Shop:
     def buy_item(self, item_name):
         """Attempts to buy an item from the shop.
         
-        Takes: ### Args?
+        Args:
             item_name: the name of the item to be bought
         Returns:
-            True: If the item is bought
-            False: if the item name isn't valid or the item is already unlocked.
-            # Bool?
+            Bool:
+                True: If the item is bought
+                False: if the item name isn't valid or the item is already unlocked.
         Side Effects: 
             - Prints to console depending on result of method
-            - Changes unlockable dictionary entry from "Locked" to "Owned" if
-                item is bought.
-                ### Changes the value of an item in the dictionary unlockable 
-                ### from "Locked" to "Owned" if the item is bought?
-        
+            - Changes the value of an item in the dictionary unlockable from 
+                "Locked" to "Owned" if the item is bought.
         """
         
-        if(item_name in self.unlockable):
-        # if item_name in self.unlockable:
-            if(self.unlockable[item_name] == "Owned"):
-            # if self.unlockable[item_name] == "Owned":
+        if item_name in self.unlockable:
+            if self.unlockable[item_name] == "Owned":
                 return("You already own this!\n")
             else:
-                self.unlockable[item_name] == "Owned"
-                return("Thank you for your business!\n")
+                if item_name in self.recipes:
+                    self.unlockable[item_name] == "Owned"
+                    return("Thank you for your business!\n")
+                if item_name in self.ad_levels:
+                    self.unlockable["Level 1"] = ""
+                    self.unlockable["Level 2"] = ""
+                    self.unlockable["Level 3"] = ""
+                    self.unlockable[item_name] = "Owned"
         else:
             return("We don't have this item.\n")
 
@@ -187,10 +186,33 @@ class Game:
                     
         Side effects: Sets attributes owned_recipes, ad_level, and profit.
         """
-        self.owned_recipes = {self.recipes[0]}
-        self.ad_level = {self.ad_levels[0]}
+        with open(gamedata, 'r') as f:
+            self.gamedata = json.load(f)
+            self.gamedata = dict(self.gamedata)
+        
+        self.owned_recipes = {[r for r in self.gamedata["Recipes"]][0]}# <
+        self.ad_level = {[a for a in self.gamedata["Ad levels"]][0]}# <
+        # These 2 lines were making references to Shop attributes as if they
+        # were attributes of Game, changed so they would operate independent
+        # of Shop.
         self.profit = 0
         
+    def unlock_item(self, item_name):
+        """Unlocks an item.
+        
+        Args: 
+            item_name:
+                the name of the item to be unlocked.
+        Side Effects:
+            Modifies owned_recipes and ad_level attributes.
+        """
+        if item_name in self.gamedata["Recipes"]:
+            self.owned_recipes[item_name] = self.gamedata["Recipes"][item_name]
+        elif item_name in self.gamedata["Ad levels"]:
+            self.ad_level = {item_name : self.gamedata["Ad Levels"][item_name]}
+    # Added unlock functionality to Game class so owned_recipes and ad_level had
+    # functionality within the game -Ethan
+            
     def valid_request(self, request):
         """Ensure that the player's input for a menu option request is valid.
     
@@ -332,17 +354,19 @@ def run_shop(shop, gamedata):
         """What would you like to do?
         Options: buy, leave"""
     )
-    if(player_in == "buy"):
+    
+    if player_in == "buy":
         item = input("What would you like to purchase?")
-        if(shop.check_item(item)):
-            if(shop.get_price(item) <= gamedata.profit):
+        if shop.check_item(item):
+            if shop.get_price(item) <= gamedata.profit:
                 print(shop.buy_item(item))
             else:
                 print("You can't afford this item.\n")
         else:
             print("We don't have this item.\n")
         run_shop(shop, gamedata)
-    if(player_in == "leave"):
+    
+    if player_in == "leave":
         print("Thanks for stopping by!\n")
     
     
@@ -436,5 +460,5 @@ def rateDish(user_list, correct_list):
     return 0  # placeholder
 
 
-def main(filepath):
+def main(filepath, customerpath, shoppath):
     game = Game(filepath)
