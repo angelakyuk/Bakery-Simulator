@@ -316,19 +316,12 @@ class Game:
         num_customers = self.gamedata["Ad levels"][current_level]
         customers = create_customers(num_customers, customerpath)
         revenue = 0
-        
-        for c in customers:
+            
+        for i in range(num_customers):
             current_dish = random.choice(list(self.owned_recipes))
             selling_price = self.gamedata["Selling prices"][current_dish]
             score = handle_dish(current_dish, self.owned_recipes, c)
             revenue += (selling_price * (score / 2))
-            expenses += round(revenue * random.rand(), 2)
-        # alternative dish code that implements handle_dish and create_customer
-        
-        for i in range(num_customers):
-            current_dish = random.choice(list(self.owned_recipes))
-            selling_price = self.gamedata["Selling prices"][current_dish]
-            revenue += selling_price
             expenses = round(revenue * random.rand(), 2)
 
         daily_profit = revenue - expenses
@@ -366,33 +359,8 @@ class Game:
     # Moved this method to the Game class and made small edits because it would 
     # be annoying to impleemnt otherwise
 
-#Sarayu Vanam's function
-def handle_unlocks(money, recipes):
-    """
-    Determines which recipe is unlocked based on how much money the baker has.
-
-    Args:
-        money (float): The amount of money the player currently has.
-        recipes (dict): A dictionary of recipes where each recipe includes 
-                        its name, price, and locked/unlocked status.
-
-    Side Effects:
-        Modifies the recipes dictionary by updating which recipes are 
-        locked or unlocked for the player.
-
-    Returns:
-        dict: The updated dictionary of recipes with their current unlock status
-    """
-
-    #for name, i in recipes.items():
-        #i["unlocked"] = True if money >= i["price"] else i["unlocked"] = False
-
-    #return recipes
 
 #Ethan Gustave's Function
-
-
-    
     
 from random import choice
 
