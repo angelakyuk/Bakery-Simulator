@@ -385,9 +385,9 @@ def handle_unlocks(money, recipes):
     """
 
     for name, i in recipes.items():
-        i["unlocked"] = True if money >= i["price"] else i["unlocked"] = False
+        #["unlocked"] = True if money >= i["price"] else i["unlocked"] = False
 
-    return recipes
+    #return recipes
 
 #Ethan Gustave's Function
 
