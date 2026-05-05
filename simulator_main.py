@@ -39,9 +39,7 @@ class Shop:
         """Initialize ShopData object.
         
         Args:
-            shop_path: The path to the file which populates the ShopData object.
-            ### is this the JSON file that has shop data?
-            ### shop_path: The path to the JSON file that has the game's shop information.
+        shop_path: The path to the JSON file that has the game's shop information.
         Side effects:
             Set attributes shopdata, recipes, ad_levels, unlockable, recipe_shop, 
                 and ad_shop.
@@ -102,7 +100,8 @@ class Shop:
             item_name(str): name of the item whose price is to be checked.
             
         Returns: 
-            the price of the item."""
+            the price of the item.
+        """
         return(self.recipe_shop(item_name[1]))
     
     def owned(self, item_name):
@@ -111,11 +110,12 @@ class Shop:
             Args:
                 item_name(str): the name of the item to be checked
             Returns:
-                True if item is owned, otherwise returns False.
-                # Bool: ?
+                Bool:
+                    True: if item is owned.
+                    False: if item is not owned.
+
             """
-        if(self.unlockable[item_name] == "Owned"):
-        # if self.unlockable[item_name] == "Owned":
+        if self.unlockable[item_name] == "Owned":
             return True
         else:
             return False
@@ -126,14 +126,13 @@ class Shop:
             Args:
                 item_name(str): the name of the item to be bought
             Returns:
-                True if valid, otherwise returns False.
-                # Bool?
-            
+                Bool:
+                    True: if item is valid.
+                    False: if item is invalid.
             """
-        if(item_name in self.recipe_shop):
-        # if item_name in self.recipe_shop:
+        if item_name in self.recipe_shop:
             return True
-        elif(item_name in self.ad_shop):
+        elif item_name in self.ad_shop:
             return True
         else:
             return False
@@ -141,25 +140,20 @@ class Shop:
     def buy_item(self, item_name):
         """Attempts to buy an item from the shop.
         
-        Takes: ### Args?
+        Args:
             item_name: the name of the item to be bought
         Returns:
-            True: If the item is bought
-            False: if the item name isn't valid or the item is already unlocked.
-            # Bool?
+            Bool:
+                True: If the item is bought
+                False: if the item name isn't valid or the item is already unlocked.
         Side Effects: 
             - Prints to console depending on result of method
-            - Changes unlockable dictionary entry from "Locked" to "Owned" if
-                item is bought.
-                ### Changes the value of an item in the dictionary unlockable 
-                ### from "Locked" to "Owned" if the item is bought?
-        
+            - Changes the value of an item in the dictionary unlockable from 
+                "Locked" to "Owned" if the item is bought.
         """
         
-        if(item_name in self.unlockable):
-        # if item_name in self.unlockable:
-            if(self.unlockable[item_name] == "Owned"):
-            # if self.unlockable[item_name] == "Owned":
+        if item_name in self.unlockable:
+            if self.unlockable[item_name] == "Owned":
                 return("You already own this!\n")
             else:
                 self.unlockable[item_name] == "Owned"
