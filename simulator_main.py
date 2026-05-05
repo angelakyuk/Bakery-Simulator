@@ -6,6 +6,27 @@ class Shop:
     """Provide and update information about shop items.
     
     Attributes:
+        shopdata (dict): A dictionary with the following keys:
+            - "Recipes" (dict of {str:list[str]}): A dictionary of recipe 
+                ingredients. The keys are recipe names and the values are a
+                list of ingredients.
+            - "Recipe prices" (dict of {str:int}): A dictionary of recipe 
+                prices for the player. The keys are recipe names and the 
+                values are the corresponding price.
+            - "Selling prices" (dict of {str:int}): A dictionary of selling
+                prices of baked goods to customers. The keys are recipe
+                names and the values are the corresponding selling price.
+            - "Ad levels" (dict of {str:int}): A dictionary of ad level 
+                information. The keys are ad levels and the values are the
+                number of customers the player will serve at that level.
+            - "Ad prices" (dict of {str:int}): A dictionary of ad level 
+                prices. The keys are ad levels and the values are the 
+                corresponding price.
+        recipes (list of str): A list of all recipe names.
+        ad_levels (list of str): A list of all ad levels.
+        unlockable (dict of {str:str}): A dictionary of the lock status of shop
+            items. Keys are recipe or ad level names. Values are "Locked",
+            "Owned", or an empty string "".
         recipe_shop (dict of {str:tuple(int, int)}): A dictionary of recipe
             shop information. Keys are recipe names. Values are tuples of the
             recipe's price for the player and selling price to customers.
@@ -13,43 +34,29 @@ class Shop:
             information. Keys are the ad level. Values are tuples of the level's 
             price for the player and the number of customers they'll serve at 
             that level.
-        unlockable (dict of {str:str}): A dictionary of the lock status of shop
-            items. Keys are recipe or ad level names. Values are "Locked",
-            "Owned", or and empty string "".
-        gamedata (dict): A dictionary with the following keys:
-                - "Recipes" (dict of {str:list[str]}): A dictionary of recipe 
-                    ingredients. The keys are recipe names and the values are a
-                    list of ingredients.
-                - "Recipe prices" (dict of {str:int}): A dictionary of recipe 
-                    prices for the player. The keys are recipe names and the 
-                    values are the corresponding price.
-                - "Selling prices" (dict of {str:int}): A dictionary of selling
-                    prices of baked goods to customers. The keys are recipe
-                    names and the values are the corresponding selling price.
-                - "Ad levels" (dict of {str:int}): A dictionary of ad level 
-                    information. The keys are ad levels and the values are the
-                    number of customers the player will serve at that level.
-                - "Ad prices" (dict of {str:int}): A dictionary of ad level 
-                    prices. The keys are ad levels and the values are the 
-                    corresponding price.
     """
     def __init__(self, shop_path):
-        
         """Initialize ShopData object.
+        
         Args:
             shop_path: The path to the file which populates the ShopData object.
+            ### is this the JSON file that has shop data?
+            ### shop_path: The path to the JSON file that has the game's shop information.
         Side effects:
-            Set attributes unlockable, recipe_shop, and ad_shop.
+            Set attributes shopdata, recipes, ad_levels, unlockable, recipe_shop, 
+                and ad_shop.
         """
-        
         with open(shop_path, 'r') as f:
-            shopdata = json.load(f)
+            self.shopdata = json.load(f)
+            self.shopdata = dict(self.shopdata)
+            # turned JSON file into dict
         
-        self.recipes = [r for r in shopdata["Recipes"]]
-        self.ad_levels = [a for a in shopdata["Ad levels"]]
-        self.owned_recipes = {self.recipes[0]}
-        self.ad_level = {self.ad_levels[0]}
-        
+        self.recipes = [r for r in self.shopdata["Recipes"]]
+        self.ad_levels = [a for a in self.shopdata["Ad levels"]]
+        self.owned_recipes = {self.recipes[0]} # <
+        self.ad_level = {self.ad_levels[0]} # <
+        # i think we should keep these two in Game so that this class has general shop
+        # info and Game has the player's stats, like owned recipes/ad level and their profit
         all_shop = self.recipes.extend(self.ad_levels)
         self.unlockable = {i : "Locked" for i in all_shop}
         self.unlockable["Sugar cookies"] = "Owned"
@@ -68,19 +75,19 @@ class Shop:
         Returns:
             str: The informal representation of the game's shop.
         """
-        recipe_shop = [f"{r} \t {prices[0]} \t {prices[1]} \t {"Owned" if r in 
+        recipe_shop = [f"{r} | {prices[0]} | {prices[1]} | {"Owned" if r in 
                        self.owned_recipes else "Locked"}" 
                        for r, prices in self.recipe_shop.items()]
-        
-        ad_shop = [f"{a} \t {prices[0]} \t {prices[1]} \t {"Current" if a in 
-                   self.owned else " "}"
+        ad_shop = [f"{a} | {prices[0]} | {prices[1]} | {"Current" if a in 
+                   self.ad_level.keys() else ""}"
+                   # self.ad_level is the player's current ad level
                    for a, prices in self.ad_shop.items()]
         return (f"------ Recipe Shop ------\n"
-                f"Recipe \t Purchase Price \t Selling Price \t Lock Status\n"
+                f"Recipe | Purchase Price | Selling Price | Lock Status\n"
                 f"{recipe_shop.join('\n')}"
                 '*Note: "Selling Price" is what your customers will pay.\n'
                 f"------ Ad Level Shop ------\n"
-                f"Ad Level \t Purchase Price \t Customers \t Lock Status"
+                f"Ad Level | Purchase Price | Customers | Lock Status"
                 f"{ad_shop.join('\n')}"
                 #'''*Note: "Customers" is how many customers you'll serve in'''
                 #'''a day.\n'''
@@ -91,12 +98,14 @@ class Shop:
     def owned(self, item_name):
         """Checks if item is owned.
             
-            Takes:
+            Takes: ### Args?
                 item_name: the name of the item to be checked
             Returns:
                 True if item is owned, otherwise returns False.
+                # Bool: ?
             """
         if(self.unlockable[item_name] == "Owned"):
+        # if self.unlockable[item_name] == "Owned":
             return True
         else:
             return False
@@ -104,13 +113,15 @@ class Shop:
     def check_item(self, item_name):
         """Checks if item request is valid. 
             
-            Takes:
+            Takes: ### Args?
                 item_name: the name of the item to be bought
             Returns:
                 True if valid, otherwise returns False.
+                # Bool?
             
             """
         if(item_name in self.recipe_shop):
+        # if item_name in self.recipe_shop:
             return True
         elif(item_name in self.ad_shop):
             return True
@@ -120,24 +131,31 @@ class Shop:
     def buy_item(self, item_name):
         """Attempts to buy an item from the shop.
         
-        Takes:
+        Takes: ### Args?
             item_name: the name of the item to be bought
         Returns:
             True: If the item is bought
             False: if the item name isn't valid or the item is already unlocked.
+            # Bool?
         Side Effects: 
             - Prints to console depending on result of method
             - Changes unlockable dictionary entry from "Locked" to "Owned" if
                 item is bought.
+                ### Changes the value of an item in the dictionary unlockable 
+                ### from "Locked" to "Owned" if the item is bought?
         
         """
         
         if(item_name in self.unlockable):
+        # if item_name in self.unlockable:
             if(self.unlockable[item_name] == "Owned"):
+            # if self.unlockable[item_name] == "Owned":
                 print("You already own this!\n")
                 return False
             else:
                 self.unlockable[item_name] == "Owned"
+                # will we add sarayu's handle_unlocks function to make sure 
+                # player has enough money?
                 print("Thank you for your business!")
                 return True
         else:
@@ -148,27 +166,9 @@ class Game:
     """GameState
     
     Attributes:
-        gamedata (dict): A dictionary with the following keys:
-            - "Recipes" (dict of {str:list[str]}): A dictionary of recipe 
-                ingredients. The keys are recipe names and the values are a
-                list of ingredients.
-            - "Recipe prices" (dict of {str:int}): A dictionary of recipe 
-                prices for the player. The keys are recipe names and the 
-                values are the corresponding price.
-            - "Selling prices" (dict of {str:int}): A dictionary of selling
-                prices of baked goods to customers. The keys are recipe
-                names and the values are the corresponding selling price.
-            - "Ad levels" (dict of {str:int}): A dictionary of ad level 
-                information. The keys are ad levels and the values are the
-                number of customers the player will serve at that level.
-            - "Ad prices" (dict of {str:int}): A dictionary of ad level 
-                prices. The keys are ad levels and the values are the 
-                corresponding price.
-            recipes (list of str): A list of all recipe names.
             owned_recipes (dict of {str:list[str]}): A dictionary of recipes the
                 player owns. Keys are recipe names. Values are the recipe's 
                 ingredients.
-            ad_levels (list of str): A list of all ad levels.
             ad_level (dict of {str:int}): A dictionary of the player's current 
                 ad level. The key is the ad level (e.g. "Level 1"). The value is
                 the number of customers they will serve.
@@ -180,12 +180,8 @@ class Game:
         Args:
             gamedata (str): A filepath to a JSON file with game data.
                     
-        Side effects: Sets attributes gamedata, recipes, owned_recipes,
-            ad_levels, ad_level, and profit.
+        Side effects: Sets attributes owned_recipes, ad_level, and profit.
         """
-        self.gamedata = dict(gamedata)
-        self.recipes = [r for r in gamedata["Recipes"]]
-        self.ad_levels = [a for a in gamedata["Ad levels"]]
         self.owned_recipes = {self.recipes[0]}
         self.ad_level = {self.ad_levels[0]}
         self.profit = 0
