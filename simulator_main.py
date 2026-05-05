@@ -95,11 +95,21 @@ class Shop:
         
     #Shop methods below by Ethan Gustave
     
+    def get_price(self, item_name):
+        """Gets price of item given the item name.
+        
+        Args: 
+            item_name(str): name of the item whose price is to be checked.
+            
+        Returns: 
+            the price of the item."""
+        return(self.recipe_shop(item_name[1]))
+    
     def owned(self, item_name):
         """Checks if item is owned.
             
-            Takes: ### Args?
-                item_name: the name of the item to be checked
+            Args:
+                item_name(str): the name of the item to be checked
             Returns:
                 True if item is owned, otherwise returns False.
                 # Bool: ?
@@ -113,8 +123,8 @@ class Shop:
     def check_item(self, item_name):
         """Checks if item request is valid. 
             
-            Takes: ### Args?
-                item_name: the name of the item to be bought
+            Args:
+                item_name(str): the name of the item to be bought
             Returns:
                 True if valid, otherwise returns False.
                 # Bool?
@@ -150,17 +160,12 @@ class Shop:
         # if item_name in self.unlockable:
             if(self.unlockable[item_name] == "Owned"):
             # if self.unlockable[item_name] == "Owned":
-                print("You already own this!\n")
-                return False
+                return("You already own this!\n")
             else:
                 self.unlockable[item_name] == "Owned"
-                # will we add sarayu's handle_unlocks function to make sure 
-                # player has enough money?
-                print("Thank you for your business!")
-                return True
+                return("Thank you for your business!\n")
         else:
-            print("We don't have this item.")
-            return False
+            return("We don't have this item.\n")
 
 class Game:
     """GameState
@@ -224,8 +229,7 @@ class Game:
         # shop function
             pass
         elif request == 'continue':
-        # start new day function
-            pass
+            self.day_profit()
         elif request == 'end game':
             print("Thanks for playing!")
             quit()
@@ -275,6 +279,27 @@ class Game:
           f"Current profit: ${round(self.profit - expenses, 2)}\n"
           )
         self.prompt_request()
+    
+    def day_profit(self):
+        current_level = list(self.ad_level)[0]
+        num_customers = self.gamedata["Ad levels"][current_level]
+        revenue = 0
+
+        for i in range(num_customers):
+            current_dish = random.choice(list(self.owned_recipes))
+            selling_price = self.gamedata["Selling prices"][current_dish]
+            revenue += selling_price
+            expenses = round(revenue * random.rand(), 2)
+
+        daily_profit = revenue - expenses
+        self.profit += daily_profit
+
+        print("------ Today's Stats ------")
+        print(f"Customers served: {num_customers}")
+        print(f"Revenue: ${round(revenue, 2)}")
+        print(f"Expenses: ${expenses}")
+        print(f"Daily profit: ${round(daily_profit, 2)}")
+        print(f"Total profit: ${round(self.profit, 2)}")
 
 #Sarayu Vanam's function
 def handle_unlocks(money, recipes):
@@ -300,8 +325,28 @@ def handle_unlocks(money, recipes):
     return recipes
 
 #Ethan Gustave's Function
-from random import choice
 
+def run_shop(shop, gamedata):
+    print(shop)
+    player_in = input(
+        """What would you like to do?
+        Options: buy, leave"""
+    )
+    if(player_in == "buy"):
+        item = input("What would you like to purchase?")
+        if(shop.check_item(item)):
+            if(shop.get_price(item) <= gamedata.profit):
+                print(shop.buy_item(item))
+            else:
+                print("You can't afford this item.\n")
+        else:
+            print("We don't have this item.\n")
+        run_shop(shop, gamedata)
+    if(player_in == "leave"):
+        print("Thanks for stopping by!\n")
+    
+    
+from random import choice
 
 def create_customers(num, customer_path):
     """Creates a list of customers from the amount specified for the day
