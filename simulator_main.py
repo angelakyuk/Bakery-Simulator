@@ -51,8 +51,8 @@ class Shop:
         
         self.recipes = [r for r in self.shopdata["Recipes"]]
         self.ad_levels = [a for a in self.shopdata["Ad levels"]]
-        all_shop = self.recipes + self.ad_levels
-        self.unlockable = {i : "Locked" for i in all_shop}
+        self.all_shop = self.recipes + self.ad_levels
+        self.unlockable = {i : "Locked" for i in self.all_shop}
         if unlocked_items == {}: # <
             self.unlockable["Sugar cookies"] = "Owned" # <
         else: # <
@@ -106,6 +106,7 @@ class Shop:
             the price of the item.
         """
         return(self.recipe_shop(item_name[1]))
+        # self.recipe_shop[item][0] bc tuple is (price, selling price)
     
     def owned(self, item_name):
         """Checks if item is owned.
@@ -137,6 +138,7 @@ class Shop:
             return True
         else:
             return True if item_name in self.ad_shop else False
+        # if item in self.all_shop True else False?
     
     def buy_item(self, item_name):
         """Attempts to buy an item from the shop.
@@ -237,7 +239,7 @@ class Game(Shop):
             print("------ Your Recipes ------\n"
                 f"{'\n'.join(recipes)}")
         elif request == 'shop':
-            print()
+            print(self)
             self.run_shop()
         elif request == 'continue':
             self.day_profit(customerdata)
