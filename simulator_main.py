@@ -384,8 +384,8 @@ def handle_unlocks(money, recipes):
         dict: The updated dictionary of recipes with their current unlock status
     """
 
-    for name, i in recipes.items():
-        #["unlocked"] = True if money >= i["price"] else i["unlocked"] = False
+    #for name, i in recipes.items():
+        #i["unlocked"] = True if money >= i["price"] else i["unlocked"] = False
 
     #return recipes
 
