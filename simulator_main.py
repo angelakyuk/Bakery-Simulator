@@ -164,11 +164,15 @@ class Game:
             - "Ad prices" (dict of {str:int}): A dictionary of ad level 
                 prices. The keys are ad levels and the values are the 
                 corresponding price.
-            recipes (list):
-            owned_recipes (list):
-            ad_levels (list):
-            ad_level (str):
-            profit (int):
+            recipes (list of str): A list of all recipe names.
+            owned_recipes (dict of {str:list[str]}): A dictionary of recipes the
+                player owns. Keys are recipe names. Values are the recipe's 
+                ingredients.
+            ad_levels (list of str): A list of all ad levels.
+            ad_level (dict of {str:int}): A dictionary of the player's current 
+                ad level. The key is the ad level (e.g. "Level 1"). The value is
+                the number of customers they will serve.
+            profit (int): How much money the player currently has.
     """
     def __init__(self, gamedata):
         """_summary_
@@ -190,11 +194,12 @@ class Game:
         """Ensure that the player's input for a menu option request is valid.
     
         Args:
-            request (str): player's input when asked if they want a certain menu 
-            option.
+            request (str): The player's input when asked if they want a certain 
+                menu option.
     
         Returns:
-            str: the player's input if it's valid. If input is invalid, 'invalid'.
+            str: The player's input if it's valid. If the input is invalid, 
+                returns 'invalid'.
         """
         valid_requests = ('shop', 'recipes', 'continue', 'end game')
         if not isinstance(request, str):
@@ -206,10 +211,10 @@ class Game:
                 return 'invalid'
             
     def fulfill_request(self, request):
-        """Carry out player's menu option request.
+        """Carry out the player's menu option request.
     
         Args:
-            request: player's menu option request.
+            request: The player's menu option request.
     
         Side effects:
             Print to stdout.
@@ -262,19 +267,16 @@ class Game:
         """Display end of day stats and prompt player requests.
     
         Args:
-            ad_level: player's current ad level.
-            gross_profit: player's gross profit for the day.
+            ad_level: The player's current ad level.
         
         Side effects:
             Print to stdout.
         """
-        expenses = round(self.gross_profit * random.rand(), 2)
+        expenses = round(self.profit * random.rand(), 2)
         print("------ Today's Stats ------\n"
           f"Total customers: {self.ad_level}\n"
-          # show ad level?
-          f"Gross profit: ${round(self.gross_profit, 2)}\n"
           f"Expenses: ${expenses}\n"
-          f"Net Profit: ${round(self.gross_profit - expenses, 2)}\n"
+          f"Current profit: ${round(self.profit - expenses, 2)}\n"
           )
         self.prompt_request()
 
