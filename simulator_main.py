@@ -51,7 +51,7 @@ class Shop:
         
         self.recipes = [r for r in self.shopdata["Recipes"]]
         self.ad_levels = [a for a in self.shopdata["Ad levels"]]
-        all_shop = self.recipes.extend(self.ad_levels)
+        all_shop = self.recipes + self.ad_levels
         self.unlockable = {i : "Locked" for i in all_shop}
         if unlocked_items == {}: # <
             self.unlockable["Sugar cookies"] = "Owned" # <
@@ -81,25 +81,17 @@ class Shop:
         Returns:
             str: The informal representation of the game's shop.
         """
-        recipe_shop = [f"{r} | {prices[0]} | {prices[1]} | {"Owned" if 
-                       self.owned(r) else "Locked"}" 
-                       for r, prices in self.recipe_shop.items()] # <
-        ad_shop = [f"{a} | {prices[0]} | {prices[1]} | {"Current" if 
-                   self.owned(a) else ""}"
-                   # self.ad_level is the player's current ad level
-                   for a, prices in self.ad_shop.items()] # <
-        # Changed two lines above so that they operate without the self.ad_level
-        # and self.owned_recipes attributes, moved mentioned attributes to 
-        # Game class.
+        recipe_shop = [f"{r}:\n${prices[0]} (P) * ${prices[1]} (S) * {self.unlockable[r]}\n" 
+                       for r, prices in self.recipe_shop.items()]
+        ad_shop = [f"{a}:\n${info[0]} (P) * {info[1]} (C) * {self.unlockable[a]}\n"
+                   for a, info in self.ad_shop.items()]
         return (f"------ Recipe Shop ------\n"
-                f"Recipe | Purchase Price | Selling Price | Lock Status\n"
-                f"{recipe_shop.join('\n')}"
-                '*Note: "Selling Price" is what your customers will pay.\n'
-                f"------ Ad Level Shop ------\n"
-                f"Ad Level | Purchase Price | Customers | Lock Status"
-                f"{ad_shop.join('\n')}"
-                #'''*Note: "Customers" is how many customers you'll serve in'''
-                #'''a day.\n'''
+                f"Recipe Price (P) | Selling Price (S) | Lock Status\n\n"
+                f"{'\n'.join(recipe_shop)}"
+                '\n*Note: "Selling Price" is what your customers will pay.\n'
+                f"\n------ Ad Level Shop ------\n"
+                f"Level Price (P) | Customers (C) | Lock Status\n\n"
+                f"{'\n'.join(ad_shop)}"
         )
         
     #Shop methods below by Ethan Gustave
@@ -173,7 +165,7 @@ class Shop:
                     self.unlockable["Level 3"] = ""
                     self.unlockable[item_name] = "Owned"
 
-class Game:
+class Game(Shop):
     """GameState
     
     Attributes:
@@ -185,23 +177,13 @@ class Game:
                 the number of customers they will serve.
             profit (int): How much money the player currently has.
     """
-    def __init__(self, gamedata):
+    def __init__(self):
         """_summary_
-
-        Args:
-            gamedata (str): A filepath to a JSON file with game data.
                     
         Side effects: Sets attributes owned_recipes, ad_level, and profit.
         """
-        with open(gamedata, 'r') as f:
-            self.gamedata = json.load(f)
-            self.gamedata = dict(self.gamedata)
-        
-        self.owned_recipes = {[r for r in self.gamedata["Recipes"]][0]}# <
-        self.ad_level = {[a for a in self.gamedata["Ad levels"]][0]}# <
-        # These 2 lines were making references to Shop attributes as if they
-        # were attributes of Game, changed so they would operate independent
-        # of Shop.
+        self.owned_recipes = {"Sugar cookies":self.shopdata["Recipes"]["Sugar cookies"]}
+        self.ad_level = {"Level 1":self.shopdata["Ad Levels"]["Level 1"]}
         self.profit = 0
         
     def unlock_item(self, item_name):
@@ -213,10 +195,10 @@ class Game:
         Side Effects:
             Modifies owned_recipes and ad_level attributes.
         """
-        if item_name in self.gamedata["Recipes"]:
-            self.owned_recipes[item_name] = self.gamedata["Recipes"][item_name]
-        elif item_name in self.gamedata["Ad levels"]:
-            self.ad_level = {item_name : self.gamedata["Ad Levels"][item_name]}
+        if item_name in self.shopdata["Recipes"]:
+            self.owned_recipes[item_name] = self.shopdata["Recipes"][item_name]
+        elif item_name in self.shopdata["Ad levels"]:
+            self.ad_level = {item_name : self.shopdata["Ad Levels"][item_name]}
     # Added unlock functionality to Game class so owned_recipes and ad_level had
     # functionality within the game -Ethan
             
@@ -253,8 +235,9 @@ class Game:
         if request == 'recipes':
             recipes = [f"{r}: {self.owned_recipes[r]}" for r in self.owned_recipes]
             print("------ Your Recipes ------\n"
-                f"{recipes.join('\n')}")
+                f"{'\n'.join(recipes)}")
         elif request == 'shop':
+            print()
             self.run_shop()
         elif request == 'continue':
             self.day_profit(customerdata)
@@ -340,7 +323,8 @@ class Game:
         # return(self.daily_profit)
     def run_shop(self):
         
-        shop = Shop(self.gamedata, self.owned_recipes, self.ad_level)
+        shop = Shop(self.shopdata, self.owned_recipes, self.ad_level)
+        #
         
         player_in = input(
             """What would you like to do?
@@ -452,6 +436,7 @@ def handle_dish(current_dish, recipe_dict, customer_name):
     Technique:
         f-strings
     """
+    # techniques and authors are in README, don't think they should be in docstrings
 
     # defines the correct order of ingredients
     correct_order = recipe_dict[current_dish]
