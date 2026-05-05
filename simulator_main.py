@@ -235,8 +235,7 @@ class Game:
         # shop function
             pass
         elif request == 'continue':
-        # start new day function
-            pass
+            self.day_profit()
         elif request == 'end game':
             print("Thanks for playing!")
             quit()
@@ -286,6 +285,27 @@ class Game:
           f"Current profit: ${round(self.profit - expenses, 2)}\n"
           )
         self.prompt_request()
+    
+    def day_profit(self):
+        current_level = list(self.ad_level)[0]
+        num_customers = self.gamedata["Ad levels"][current_level]
+        revenue = 0
+
+        for i in range(num_customers):
+            current_dish = random.choice(list(self.owned_recipes))
+            selling_price = self.gamedata["Selling prices"][current_dish]
+            revenue += selling_price
+            expenses = round(revenue * random.rand(), 2)
+
+        daily_profit = revenue - expenses
+        self.profit += daily_profit
+
+        print("------ Today's Stats ------")
+        print(f"Customers served: {num_customers}")
+        print(f"Revenue: ${round(revenue, 2)}")
+        print(f"Expenses: ${expenses}")
+        print(f"Daily profit: ${round(daily_profit, 2)}")
+        print(f"Total profit: ${round(self.profit, 2)}")
 
 #Sarayu Vanam's function
 def handle_unlocks(money, recipes):
