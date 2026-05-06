@@ -11,7 +11,8 @@ class Shop:
         
         self.recipes = [r for r in self.shopdata["Recipes"]]
         self.ad_levels = [a for a in self.shopdata["Ad Levels"]]
-        self.owned_recipes = {"Sugar cookies":self.shopdata["Recipes"]["Sugar cookies"]}
+        # self.owned_recipes = {"Sugar cookies":self.shopdata["Recipes"]["Sugar cookies"]}
+        self.owned_recipes = {r : self.shopdata["Recipes"][r] for r in self.recipes}
         self.ad_level = {"Level 1":self.shopdata["Ad Levels"]["Level 1"]}
         
         all_shop = self.recipes + self.ad_levels
@@ -33,16 +34,16 @@ class Shop:
         Returns:
             str: The informal representation of the game's shop.
         """
-        recipe_shop = [f"{r}:\n${prices[0]} (P) * ${prices[1]} (S) * {self.unlockable[r]}\n" 
+        recipe_shop = [f"\n{r}:\n${prices[0]} (P) * ${prices[1]} (S) * {self.unlockable[r]}" 
                        for r, prices in self.recipe_shop.items()]
-        ad_shop = [f"{a}:\n${info[0]} (P) * {info[1]} (C) * {self.unlockable[a]}\n"
+        ad_shop = [f"\n{a}:\n${info[0]} (P) * {info[1]} (C) * {self.unlockable[a]}"
                    for a, info in self.ad_shop.items()]
-        return (f"------ Recipe Shop ------\n"
-                f"Recipe Price (P) | Selling Price (S) | Lock Status\n\n"
+        return (f"\n------ Recipe Shop ------\n"
+                f"Recipe Price (P) | Selling Price (S) | Lock Status\n"
                 f"{'\n'.join(recipe_shop)}"
                 '\n*Note: "Selling Price" is what your customers will pay.\n'
                 f"\n------ Ad Level Shop ------\n"
-                f"Level Price (P) | Customers (C) | Lock Status\n\n"
+                f"Level Price (P) | Customers (C) | Lock Status\n"
                 f"{'\n'.join(ad_shop)}"
         )
 
@@ -75,8 +76,8 @@ class Shop:
             Modify attributes if player purchases an item.
         """
         if request == 'recipes':
-            recipes = [f"{r}: {self.owned_recipes[r]}" for r in self.owned_recipes]
-            print("------ Your Recipes ------\n"
+            recipes = [f"\n{r}: {self.owned_recipes[r]}" for r in self.owned_recipes]
+            print("\n------ Your Recipes ------\n"
                 f"{'\n'.join(recipes)}")
         elif request == 'shop':
             print(self)
@@ -94,23 +95,23 @@ class Shop:
             Print to stdout.
             Modify certain attributes if player purchases an item.
         """
-        menu_options = ("------ Menu Options ------\n"
+        menu_options = ("\n------ Menu Options ------\n"
                     "[recipes] to review your recipes\n"
                     "[shop] to browse the shop\n"
                     "[continue] to continue to the next day\n"
-                    "[end game] to end the game\n"
+                    "[end game] to end the game\n\n"
                     )
         request = input(menu_options)
         validated = self.valid_request(request.lower())
         while validated == 'invalid':
-            print("That's not a valid menu option. Try again!")
+            print("\n* That's not a valid menu option. Try again! *")
             request = input(menu_options)
             validated = self.valid_request(request.lower())
         self.fulfill_request(validated)
-        more = input("Would you like to select another menu option? (Y/N). ")
+        more = input("\nWould you like to select another menu option? (Y/N). ")
         while more.lower() not in ('y', 'n'):
-            print("That's not a valid option. Try again!")
-            more = input("Would you like to select another menu option? (Y/N). ")
+            print("\n* That's not a valid option. Try again! *")
+            more = input("\nWould you like to select another menu option? (Y/N). ")
         if more.lower() == 'y':
             self.prompt_request()
         elif more.lower() == 'n':
