@@ -311,7 +311,7 @@ class Game:
             score = handle_dish(current_dish, self.owned_recipes, c)
             revenue += (selling_price * (score / 2))
             expenses += round(revenue * random.rand(), 2)
-        # alternative dish code that implements handle_dish and create_customer
+        #^alternative dish code that implements handle_dish and create_customer^
         
         # for i in range(num_customers):
         #     current_dish = random.choice(list(self.owned_recipes))
@@ -331,8 +331,6 @@ class Game:
         # return(self.daily_profit)
     def run_shop(self):
         
-        shop = Shop(self.shopdata, self.owned_recipes, self.ad_level)
-        #
         
         player_in = input(
             """What would you like to do?
@@ -341,17 +339,16 @@ class Game:
         
         if player_in == "buy":
             item = input("What would you like to purchase?")
-            if shop.check_item(item):
+            if self.shop.check_item(item):
                 if self.shop.get_price(item) <= self.profit:
                     if self.profit >= self.shop.get_price(item):
                         self.unlock_item(item)
-                        shop.buy_item(item)
+                        self.shop.buy_item(item)
                         print("Thank you for your business!\n")
                 else:
                     print("You can't afford this item.\n")
             else:
                 print("We don't have this item.\n")
-            self.run_shop(shop, self.shop.shopdata)
             # is this to execute run_shop again
         
         if player_in == "leave":
