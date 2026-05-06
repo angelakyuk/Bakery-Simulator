@@ -50,7 +50,7 @@ class Shop:
                        for r, prices in self.recipe_shop.items()]
         
         ad_shop = [f"{a} | {prices[0]} | {prices[1]} | {"Current" if a in 
-                   self.owned else " "}"
+                   self.ad_level else " "}"
                    for a, prices in self.ad_shop.items()]
         return (f"------ Recipe Shop ------\n"
                 f"Recipe | Purchase Price | Selling Price | Lock Status\n"
