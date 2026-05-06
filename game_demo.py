@@ -42,9 +42,9 @@ class Shop:
                    for a, info in self.ad_shop.items()]
         return (f"\n------ Recipe Shop ------\n"
                 f"Recipe Price (P) | Selling Price (S) | Lock Status\n"
+                '*Note: "Selling Price" is what your customers will pay.\n'
                 f"{'\n'.join(recipe_shop)}"
-                '\n*Note: "Selling Price" is what your customers will pay.\n'
-                f"\n------ Ad Level Shop ------\n"
+                f"\n\n------ Ad Level Shop ------\n"
                 f"Level Price (P) | Customers (C) | Lock Status\n"
                 f"{'\n'.join(ad_shop)}"
         )
@@ -124,6 +124,8 @@ class Shop:
         print(f"Expenses: ${expenses}")
         print(f"Daily profit: ${round(daily_profit, 2)}")
         print(f"Total profit: ${round(self.profit, 2)}")
+        self.prompt_request()
+        
     def prompt_request(self):
         """Prompt player for menu option requests and carry them out.
 
@@ -153,23 +155,23 @@ class Shop:
         elif more.lower() == 'n':
             self.fulfill_request('continue')
             
-def day_end(self):
-        """Display end of day stats and prompt player requests.
+# def day_end(self):
+#         """Display end of day stats and prompt player requests.
     
-        Args:
-            ad_level: The player's current ad level.
+#         Args:
+#             ad_level: The player's current ad level.
         
-        Side effects:
-            Print to stdout.
-        """
-        expenses = round(self.profit * random.rand(), 2)
-        print("------ Today's Stats ------\n"
-          f"Total customers: {self.ad_level}\n"
-          f"Daily profit: {self.daily_profit}"
-          f"Expenses: ${expenses}\n"
-          f"Current profit: ${round(self.profit - expenses, 2)}\n"
-          )
-        self.prompt_request()
+#         Side effects:
+#             Print to stdout.
+#         """
+#         expenses = round(self.profit * random.rand(), 2)
+#         print("------ Today's Stats ------\n"
+#           f"Total customers: {self.ad_level}\n"
+#           f"Daily profit: {self.daily_profit}"
+#           f"Expenses: ${expenses}\n"
+#           f"Current profit: ${round(self.profit - expenses, 2)}\n"
+#           )
+#         self.prompt_request()
     
 from random import shuffle
 
@@ -201,7 +203,7 @@ def handle_dish(current_dish, recipe_dict):
     
     shuffled = correct_order[:]
     shuffle(shuffled)
-    print(f"\n Dish: {current_dish}")
+    print(f"\nDish: {current_dish}\n")
     print("Ingredients (shuffled):")
 
     # builds the user-inputted list of ingredients
@@ -259,7 +261,7 @@ def rate_dish(user_list, correct_list):
     )
 
     # displays the ranking of the user's ingredients
-    print("\n Ranked ingredients (best to worst):")
+    print("\nRanked ingredients (correct to incorrect):")
     for item in ranked:
         print(f"- {item}")
 
