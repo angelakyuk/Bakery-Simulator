@@ -42,13 +42,12 @@ class Shop:
             shop_path: A path to a JSON file that has shop information.
         
         Side effects:
-            Sets the attributes shopdata, recipes, ad_levels, unlockable, 
-                recipe_shop, and ad_shop.
+            Set attributes shopdata, recipes, ad_levels, unlockable, recipe_shop, 
+                and ad_shop.
         """
         with open(shop_path, 'r') as f:
             self.shopdata = json.load(f)
             self.shopdata = dict(self.shopdata)
-            # turned JSON file into dict
         
         self.recipes = [r for r in self.shopdata["Recipes"]]
         self.ad_levels = [a for a in self.shopdata["Ad levels"]]
@@ -113,12 +112,11 @@ class Shop:
     def owned(self, item_name):
         """Checks if item is owned.
             
-            Args:
-                item_name(str): the name of the item to be checked
-            Returns:
-                Bool:
-                    True: if item is owned.
-                    False: if item is not owned.
+        Args:
+            item_name (str): the name of the item to be checked
+        
+        Returns:
+            Bool: True if item is owned. False if item is not owned.
 
             """
         if self.unlockable[item_name] == "Owned":
@@ -129,18 +127,17 @@ class Shop:
     def check_item(self, item_name):
         """Checks if item request is valid. 
             
-            Args:
-                item_name(str): the name of the item to be bought
-            Returns:
-                Bool:
-                    True: if item is valid.
-                    False: if item is invalid.
+        Args:
+            item_name (str): the name of the item to be bought.
+            
+        Returns:
+            Bool: True if item is valid. False if item is invalid.
             """
         if item_name in self.recipe_shop:
             return True
         else:
             return True if item_name in self.ad_shop else False
-        # if item in self.all_shop True else False?
+        # conditional statement in else is the same as whole conditional statement
     
     def buy_item(self, item_name):
         """Attempts to buy an item from the shop.
@@ -148,9 +145,9 @@ class Shop:
         Args:
             item_name: the name of the item to be bought
         Returns:
-            Bool:
-                True: If the item is bought
-                False: if the item name isn't valid or the item is already unlocked.
+            Bool: True if the item is bought. False if the item name isn't valid 
+                or the item is already unlocked.
+                
         Side Effects: 
             - Prints to console depending on result of method
             - Changes the value of an item in the dictionary unlockable from 
@@ -168,6 +165,9 @@ class Shop:
                     self.unlockable["Level 2"] = ""
                     self.unlockable["Level 3"] = ""
                     self.unlockable[item_name] = "Owned"
+                    # for a in self.ad_levels:
+                    #     self.unlockable[a] = ""
+                    # self.unlockable[item] = "Owned"
 
 class Game:
     """Play Bakery Simulator.
@@ -182,9 +182,10 @@ class Game:
         profit (int): How much money the player currently has.
     """
     def __init__(self, path):
-        """_summary_
+        """Initialize Game object.
                     
-        Side effects: Sets attributes owned_recipes, ad_level, and profit.
+        Side effects: 
+            Sets attributes owned_recipes, ad_level, and profit.
         """
         self.shop = Shop(path)
         self.owned_recipes = {"Sugar cookies":self.shop.shopdata["Recipes"]
