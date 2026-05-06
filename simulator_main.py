@@ -8,20 +8,19 @@ class Shop:
     Attributes:
         shopdata (dict): A dictionary with the following keys:
             - "Recipes" (dict of {str:list[str]}): A dictionary of recipe 
-                ingredients. The keys are recipe names and the values are a
-                list of ingredients.
+                ingredients. Keys are recipe names. Values are a list of
+                ingredients.
             - "Recipe prices" (dict of {str:int}): A dictionary of recipe 
-                prices for the player. The keys are recipe names and the 
-                values are the corresponding price.
-            - "Selling prices" (dict of {str:int}): A dictionary of selling
-                prices of baked goods to customers. The keys are recipe
-                names and the values are the corresponding selling price.
-            - "Ad levels" (dict of {str:int}): A dictionary of ad level 
-                information. The keys are ad levels and the values are the
-                number of customers the player will serve at that level.
-            - "Ad prices" (dict of {str:int}): A dictionary of ad level 
-                prices. The keys are ad levels and the values are the 
+                prices for the player. Keys are recipe names. Values are the
                 corresponding price.
+            - "Selling prices" (dict of {str:int}): A dictionary of selling
+                prices of baked goods to customers. Keys are recipe names.
+                Values are the corresponding selling price.
+            - "Ad levels" (dict of {str:int}): A dictionary of ad level 
+                information. Keys are ad levels. Values are the number of
+                customers the player will serve at that level.
+            - "Ad prices" (dict of {str:int}): A dictionary of ad level 
+                prices. Keys are ad levels. Values are the corresponding price.
         recipes (list of str): A list of all recipe names.
         ad_levels (list of str): A list of all ad level titles.
         unlockable (dict of {str:str}): A dictionary of the lock status of shop
@@ -37,11 +36,10 @@ class Shop:
             shop information. Keys are recipe names. Values are tuples of the
             recipe's price for the player and selling price to customers.
         ad_shop (dict of {str:tuple(int, int)}): A dictionary of ad level shop
-            information. Keys are the ad level. Values are tuples of the level's 
-            price for the player and the number of customers they'll serve at 
-            that level.
+            information. Keys are ad level titles (e.g. "Level 1"). Values are 
+            tuples of the level's price and the number of customers to serve.
     """
-    def __init__(self, shop_path, unlocked_items = {}, unlocked_ad = {}):
+    def __init__(self, shop_path):
         """Initialize ShopData object.
         
         Args:
@@ -57,24 +55,15 @@ class Shop:
         self.recipes = [r for r in self.shopdata["Recipes"]]
         self.ad_levels = [a for a in self.shopdata["Ad levels"]]
         self.all_shop = self.recipes + self.ad_levels
+        
         self.unlockable = {i : "Locked" for i in self.all_shop}
-        if unlocked_items == {}: # <
-            self.unlockable["Sugar cookies"] = "Owned" # <
-        else: # <
-            for i in unlocked_items: # <
-                self.unlockable[i] = "Owned" # <
-        if unlocked_ad == {}: # <
-            self.unlockable["Level 1"] = "Owned" # <
-        else: # <
-            self.unlockable["Level 1"] = "" # <
-            self.unlockable["Level 2"] = "" # <
-            self.unlockable["Level 3"] = "" # <
-            self.unlockable[list(unlocked_ad)[0]] = "Owned" # <
-        # Added these lines so the shop knows what's already unlocked when
-        # the player opens it up
-        self.owned_recipes = {"Sugar cookies":self.shopdata["Recipes"]
-                              ["Sugar cookies"]}
-        self.ad_level = {"Level 1":self.shopdata["Ad levels"]["Level 1"]}
+        self.unlockable["Sugar cookies"] = "Owned"
+        self.unlockable["Level 1"] = "Owned"
+        self.owned_recipes = {"Sugar cookies":
+                              self.shopdata["Recipes"]["Sugar cookies"]}
+        self.ad_level = {"Level 1":
+                         self.shopdata["Ad levels"]["Level 1"]}
+        
         self.recipe_shop = {r : (self.shopdata["Recipe prices"][r], 
                                  self.shopdata["Selling prices"][r]) 
                             for r in self.recipes}
@@ -106,10 +95,10 @@ class Shop:
         
     #Shop methods below by Ethan Gustave
     def get_price(self, item_name):
-        """Gets price of item given the item name.
+        """Gets price of item given the item's name.
         
         Args: 
-            item_name(str): name of the item whose price is to be checked.
+            item_name (str): The name of the item whose price is to be checked.
             
         Returns: 
             int: The purchase price of the item.
@@ -125,11 +114,10 @@ class Shop:
         """Checks if item is owned.
             
         Args:
-            item_name (str): the name of the item to be checked
+            item_name (str): The name of the item to be checked.
         
         Returns:
             Bool: True if item is owned. False if item is not owned.
-
             """
         if self.unlockable[item_name] == "Owned":
             return True
@@ -142,7 +130,7 @@ class Shop:
         """Checks if item request is valid. 
             
         Args:
-            item_name (str): the name of the item to be bought.
+            item_name (str): The name of the item to be bought.
             
         Returns:
             Bool: True if item is valid. False if item is invalid.
@@ -159,7 +147,7 @@ class Shop:
         """Attempts to buy an item from the shop.
         
         Args:
-            item_name (str): the name of the item to be bought
+            item_name (str): The name of the item to be bought
                         
         Returns:
             Bool: True if the item is bought. False if the item name isn't valid 
