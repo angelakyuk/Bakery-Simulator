@@ -40,8 +40,8 @@ class Shop:
                    for a, info in self.ad_shop.items()]
         return (f"\n------ Recipe Shop ------\n"
                 f"Recipe Price (P) | Selling Price (S) | Lock Status\n"
+                '*Note: "Selling Price" is what your customers will pay.\n'
                 f"{'\n'.join(recipe_shop)}"
-                '\n*Note: "Selling Price" is what your customers will pay.\n'
                 f"\n------ Ad Level Shop ------\n"
                 f"Level Price (P) | Customers (C) | Lock Status\n"
                 f"{'\n'.join(ad_shop)}"
@@ -85,7 +85,7 @@ class Shop:
         # start new day function
             pass
         elif request == 'end game':
-            print("Thanks for playing!")
+            print("\nThanks for playing!")
             quit()
             
     def prompt_request(self):

@@ -22,7 +22,7 @@ functions to run Bakery Simulator.
 **personal.py**: All of Angela Kyuk's function and class drafts/brainstorms.
 
 **request_functions.py**: Angela Kyuk's drafts of valid_request, fulfill_request, 
-prompt_request, and day_end functions.
+prompt_request, and day_end functions. Used in live demo.
 
 **shop.py**: Draft of the Shop class. First draft written by Ethan Gustave. Second
 draft written by Angela Kyuk and edited by Ethan Gustave.
@@ -37,8 +37,7 @@ How to run the program from the command line.
 |  Method/Function | Primary Author | Technique Demonstrated |
 | ---------------  | -------------- | ---------------------- |
 | `day_profit`     | Sarayu Vanam   | Optional arguments     |
-| `parse_args`     | Sarayu Vanam   | ArgumentParser class   |
-|                  |                | from argparse module   |
+| `parse_args`     | Sarayu Vanam   | ArgumentParser class from argparse module |
 | `__str__`        | Angela Kyuk    | Magic method           |
 | `__init__`       | Angela Kyuk    | Dictionary comprehension|
 | `check_item`     | Ethan Gustave  | Conditional Expression | 
