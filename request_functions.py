@@ -11,8 +11,8 @@ class Shop:
         
         self.recipes = [r for r in self.shopdata["Recipes"]]
         self.ad_levels = [a for a in self.shopdata["Ad Levels"]]
-        # self.owned_recipes = {"Sugar cookies":self.shopdata["Recipes"]["Sugar cookies"]}
-        self.owned_recipes = {r : self.shopdata["Recipes"][r] for r in self.recipes}
+        self.owned_recipes = {"Sugar cookies":self.shopdata["Recipes"]["Sugar cookies"]}
+        # self.owned_recipes = {r : self.shopdata["Recipes"][r] for r in self.recipes}
         self.ad_level = {"Level 1":self.shopdata["Ad Levels"]["Level 1"]}
         
         all_shop = self.recipes + self.ad_levels
@@ -42,7 +42,7 @@ class Shop:
                 f"Recipe Price (P) | Selling Price (S) | Lock Status\n"
                 '*Note: "Selling Price" is what your customers will pay.\n'
                 f"{'\n'.join(recipe_shop)}"
-                f"\n------ Ad Level Shop ------\n"
+                f"\n\n------ Ad Level Shop ------\n"
                 f"Level Price (P) | Customers (C) | Lock Status\n"
                 f"{'\n'.join(ad_shop)}"
         )
