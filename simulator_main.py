@@ -344,7 +344,7 @@ class Game:
             print("------ Today's Stats ------")
             print(f"Customers served: {len(customers)}")
             print(f"Revenue: ${round(revenue, 2)}")
-            print(f"Expenses: ${expenses}")
+            #print(f"Expenses: ${expenses}")
             print(f"Daily profit: ${round(daily_profit, 2)}")
             print(f"Total profit: ${round(self.profit, 2)}")
     
