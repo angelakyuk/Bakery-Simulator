@@ -126,12 +126,15 @@ class Shop:
         Side effects:
             Print to stdout.
         """
-        expenses = round(self.gross_profit * random.rand(), 2)
+        tip_percent = random.uniform(0.05, 0.25)
+        tip_amount = round(self.gross_profit * tip_percent, 2)
+        net_profit = self.gross_profit + tips
+        
         print("------ Today's Stats ------\n"
             f"Total customers: {self.ad_level}\n"
             f"Gross profit: ${round(self.gross_profit, 2)}\n"
-            f"Expenses: ${expenses}\n"
-            f"Net Profit: ${round(self.gross_profit - expenses, 2)}\n"
+            f"Tips: ${tips}\n"
+            f"Net Profit: ${round(net_profit, 2)}\n"
             )
         self.prompt_request()
 
