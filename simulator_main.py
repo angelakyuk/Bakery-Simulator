@@ -280,7 +280,7 @@ class Game:
         elif more.lower() == 'n':
             self.fulfill_request('continue', customerdata)
             
-    def day_end(self):
+    def day_end(self, customerpath):
         """Display end of day stats and prompt player requests.
     
         Args:
@@ -289,30 +289,32 @@ class Game:
         Side effects:
             Print to stdout.
         """
-        expenses = round(self.profit * random.rand(), 2)
+        stats = self.day_profit(customerpath)
+        
         print("------ Today's Stats ------\n"
-          f"Total customers: {self.ad_level}\n"
-          f"Daily profit: {self.daily_profit}"
-          f"Expenses: ${expenses}\n"
-          f"Current profit: ${round(self.profit - expenses, 2)}\n"
+          f"Total customers: {stats["customers_served"]}\n"
+          f"Revenue: {stats["revenue"]}\n"
+          f"Daily profit: {stats["daily_profit"]}\n"
+          f"Expenses: ${stats["expenses"]}\n"
+          f"Current profit: ${stats["total_profit"]}\n"
           )
         self.prompt_request()
     
-    def day_profit(self, customerpath, show_stats = True, expense_rate = None):
+    def day_profit(self, customerpath, expense_rate = None):
         """
         Calculates the revenue, expenses, and profits for the day.
         
         Args:
             customerpath: The path of the text file to be used to import
             customer names.
-            show_stats: Determines if all the stats should be printed.
             expense_rate: A set amount of money going towards expenses.
-        """
         
+        Returns:
+            dict: Today's customers, revenue, expenses, daily prfit, and total
+            profit.
+        """
         current_level = list(self.ad_level)[0]
-        # 3
         num_customers = self.gamedata["Ad levels"][current_level]
-        # 3
         customers = create_customers(num_customers, customerpath)
         revenue = 0
             
@@ -321,24 +323,21 @@ class Game:
             selling_price = self.shop.shopdata["Selling prices"][current_dish]
             score = handle_dish(current_dish, self.owned_recipes, c)
             revenue += (selling_price * (score / 2))
-            expenses += round(revenue * random.rand(), 2)
-        # alternative dish code that implements handle_dish and create_customer
-        
-        for i in range(num_customers):
-            current_dish = random.choice(list(self.owned_recipes))
-            selling_price = self.gamedata["Selling prices"][current_dish]
-            revenue += selling_price
-            expenses = round(revenue * random.rand(), 2)
 
+        if expense_rate is None:
+            expense_rate = random.rand()
+            
+        expenses = round(revenue * expense_rate, 2)
         daily_profit = revenue - expenses
         self.profit += daily_profit
 
-        print("------ Today's Stats ------")
-        print(f"Customers served: {len(customers)}")
-        print(f"Revenue: ${round(revenue, 2)}")
-        print(f"Expenses: ${expenses}")
-        print(f"Daily profit: ${round(daily_profit, 2)}")
-        print(f"Total profit: ${round(self.profit, 2)}")
+        return {
+            "customers_served": len(customers),
+            "revenue": round(revenue, 2),
+            "expenses": expenses,
+            "daily_profit": daily_profit,
+            "total_profit": round(self.profit, 2)
+        }
     
     def run_shop(self):
         
