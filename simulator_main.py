@@ -298,14 +298,24 @@ class Game:
           )
         self.prompt_request()
     
-    def day_profit(self, customerpath):
+    def day_profit(self, customerpath, show_stats = True, expense_rate = None):
+        """
+        Calculates the revenue, expenses, and profits for the day.
+        
+        Args:
+            customerpath: The path of the text file to be used to import
+            customer names.
+            show_stats: Determines if all the stats should be printed.
+            expense_rate: A set amount of money going towards expenses.
+        """
+        
         current_level = list(self.ad_level)[0]
         # 3
         num_customers = self.gamedata["Ad levels"][current_level]
         # 3
         customers = create_customers(num_customers, customerpath)
         revenue = 0
-        
+            
         for c in customers:
             current_dish = random.choice(list(self.owned_recipes))
             selling_price = self.shop.shopdata["Selling prices"][current_dish]
@@ -314,11 +324,11 @@ class Game:
             expenses += round(revenue * random.rand(), 2)
         # alternative dish code that implements handle_dish and create_customer
         
-        # for i in range(num_customers):
-        #     current_dish = random.choice(list(self.owned_recipes))
-        #     selling_price = self.gamedata["Selling prices"][current_dish]
-        #     revenue += selling_price
-        #     expenses = round(revenue * random.rand(), 2)
+        for i in range(num_customers):
+            current_dish = random.choice(list(self.owned_recipes))
+            selling_price = self.gamedata["Selling prices"][current_dish]
+            revenue += selling_price
+            expenses = round(revenue * random.rand(), 2)
 
         daily_profit = revenue - expenses
         self.profit += daily_profit
@@ -329,11 +339,9 @@ class Game:
         print(f"Expenses: ${expenses}")
         print(f"Daily profit: ${round(daily_profit, 2)}")
         print(f"Total profit: ${round(self.profit, 2)}")
-        # return(self.daily_profit)
+    
     def run_shop(self):
         
-        shop = Shop(self.shopdata, self.owned_recipes, self.ad_level)
-        #
         
         player_in = input(
             """What would you like to do?
@@ -342,17 +350,16 @@ class Game:
         
         if player_in == "buy":
             item = input("What would you like to purchase?")
-            if shop.check_item(item):
+            if self.shop.check_item(item):
                 if self.shop.get_price(item) <= self.profit:
                     if self.profit >= self.shop.get_price(item):
                         self.unlock_item(item)
-                        shop.buy_item(item)
+                        self.shop.buy_item(item)
                         print("Thank you for your business!\n")
                 else:
                     print("You can't afford this item.\n")
             else:
                 print("We don't have this item.\n")
-            self.run_shop(shop, self.shop.shopdata)
             # is this to execute run_shop again
         
         if player_in == "leave":
@@ -360,33 +367,8 @@ class Game:
     # Moved this method to the Game class and made small edits because it would 
     # be annoying to impleemnt otherwise
 
-#Sarayu Vanam's function
-def handle_unlocks(money, recipes):
-    """
-    Determines which recipe is unlocked based on how much money the baker has.
-
-    Args:
-        money (float): The amount of money the player currently has.
-        recipes (dict): A dictionary of recipes where each recipe includes 
-                        its name, price, and locked/unlocked status.
-
-    Side Effects:
-        Modifies the recipes dictionary by updating which recipes are 
-        locked or unlocked for the player.
-
-    Returns:
-        dict: The updated dictionary of recipes with their current unlock status
-    """
-
-    for name, i in recipes.items():
-        i["unlocked"] = True if money >= i["price"] else i["unlocked"] = False
-
-    return recipes
 
 #Ethan Gustave's Function
-
-
-    
     
 from random import choice
 
