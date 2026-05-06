@@ -7,8 +7,7 @@ from argparse import ArgumentParser
 class Shop:
     def __init__(self, shop_path):
         with open(shop_path, 'r') as f:
-            self.shopdata = json.load(f)
-            self.shopdata = dict(self.shopdata)
+            self.shopdata = dict(json.load(f))
         
         self.recipes = [r for r in self.shopdata["Recipes"]]
         self.ad_levels = [a for a in self.shopdata["Ad Levels"]]
@@ -18,7 +17,8 @@ class Shop:
         self.profit = 0
         
         all_shop = self.recipes + self.ad_levels
-        self.unlockable = {i : "Locked" for i in all_shop}
+        self.unlockable = {i : "Locked" if i in self.recipes else ""
+                           for i in all_shop}
         self.unlockable["Sugar cookies"] = "Owned"
         self.unlockable["Level 1"] = "Owned"
         
