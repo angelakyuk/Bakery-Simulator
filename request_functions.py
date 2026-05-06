@@ -40,9 +40,9 @@ class Shop:
                    for a, info in self.ad_shop.items()]
         return (f"\n------ Recipe Shop ------\n"
                 f"Recipe Price (P) | Selling Price (S) | Lock Status\n"
+                '*Note: "Selling Price" is what your customers will pay.\n'
                 f"{'\n'.join(recipe_shop)}"
-                '\n*Note: "Selling Price" is what your customers will pay.\n'
-                f"\n------ Ad Level Shop ------\n"
+                f"\n\n------ Ad Level Shop ------\n"
                 f"Level Price (P) | Customers (C) | Lock Status\n"
                 f"{'\n'.join(ad_shop)}"
         )
@@ -85,7 +85,7 @@ class Shop:
         # start new day function
             pass
         elif request == 'end game':
-            print("Thanks for playing!")
+            print("\nThanks for playing!")
             quit()
             
     def prompt_request(self):
@@ -117,27 +117,27 @@ class Shop:
         elif more.lower() == 'n':
             self.fulfill_request('continue')
             
-    def day_end(self):
-        """Display end of day stats and prompt player requests.
+    # def day_end(self):
+    #     """Display end of day stats and prompt player requests.
 
-        Args:
-            ad_level: player's current ad level.
-            gross_profit: player's gross profit for the day.
+    #     Args:
+    #         ad_level: player's current ad level.
+    #         gross_profit: player's gross profit for the day.
         
-        Side effects:
-            Print to stdout.
-        """
-        tip_percent = random.uniform(0.05, 0.25)
-        tip_amount = round(self.gross_profit * tip_percent, 2)
-        net_profit = self.gross_profit + tips
+    #     Side effects:
+    #         Print to stdout.
+    #     """
+    #     tip_percent = random.uniform(0.05, 0.25)
+    #     tip_amount = round(self.gross_profit * tip_percent, 2)
+    #     net_profit = self.gross_profit + tip_amount
         
-        print("------ Today's Stats ------\n"
-            f"Total customers: {self.ad_level}\n"
-            f"Gross profit: ${round(self.gross_profit, 2)}\n"
-            f"Tips: ${tips}\n"
-            f"Net Profit: ${round(net_profit, 2)}\n"
-            )
-        self.prompt_request()
+    #     print("------ Today's Stats ------\n"
+    #         f"Total customers: {self.ad_level}\n"
+    #         f"Gross profit: ${round(self.gross_profit, 2)}\n"
+    #         f"Tips: ${tip_amount}\n"
+    #         f"Net Profit: ${round(net_profit, 2)}\n"
+    #         )
+    #     self.prompt_request()
 
 def main(path):
     game = Shop(path)
