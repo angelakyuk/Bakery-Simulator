@@ -1,8 +1,11 @@
 # Bakery-Simulator
 A text-based bakery simulator game.
+Objective:
+
+Rules:
 
 # How to run Bakery Simulator
-To play the game, enter the files simulator_main.py and shop_data.JSON (e.g. python3 simulator_main.py shop_data.JSON).
+To play the game, enter the files simulator_main.py, shop_data.JSON, customers.txt (e.g. python3 simulator_main.py shop_data.JSON customers.txt).
 It's optional but if you want to enter an expense_rate you can add the command --expense-rate $rate at the end. (e.g. python3 simulator_main.py shop_data.JSON --expense-rate 0.25)
 
 User input notes: 
@@ -41,7 +44,7 @@ draft written by Angela Kyuk and edited by Ethan Gustave.
 ### Non-Project Files
 **collab_exercise.txt**: The file submitted for "Exercise: Collaborative programming".
 
-# Attribution
+# Attribution Table
 |  Method/Function | Primary Author | Technique Demonstrated |
 | ---------------  | -------------- | ---------------------- |
 | `day_profit`     | Sarayu Vanam   | Optional parameters    |
