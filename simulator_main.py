@@ -23,6 +23,7 @@ class Shop:
                 prices. Keys are ad levels. Values are the corresponding price.
         recipes (list of str): A list of all recipe names.
         ad_levels (list of str): A list of all ad level titles.
+        all_shop (list of str): The lists recipes and ad_levels concatenated.
         unlockable (dict of {str:str}): A dictionary of the lock status of shop
             items. Keys are recipe or ad level names. Values are "Locked" or
             "Owned".
@@ -85,9 +86,12 @@ class Shop:
                 the item's name, purchase price, selling price to customers or 
                 number of customers to serve, and lock status.
         """
-        recipe_shop = [f"\n{r}:\n${round(p[0], 2)} (P) * ${round(p[1], 2)} (S) * {self.unlockable[r]}" 
+        recipe_shop = [f"\n{r}:\n${'{:,.2f}'.format(p[0])} (P) * "
+                       f"${'{:,.2f}'.format(p[1])} (S) * "
+                       f"{self.unlockable[r]}" 
                        for r, p in self.recipe_shop.items()]
-        ad_shop = [f"\n{a}:\n${round(i[0], 2)} (P) * {i[1]} (C) * {self.unlockable[a]}"
+        ad_shop = [f"\n{a}:\n${'{:,.2f}'.format(i[0])} (P) * {i[1]} (C) * "
+                   f"{self.unlockable[a]}"
                    for a, i in self.ad_shop.items()]
         return (f"\n------ Recipe Shop ------\n"
                 f"Recipe Price (P) | Selling Price (S) | Lock Status\n"
@@ -139,17 +143,13 @@ class Shop:
         Returns:
             Bool: True if item is valid. False if item is invalid.
             """
-        # if item_name in self.recipe_shop:
-        #     return True
-        # else:
-        #     return True if item_name in self.ad_shop else False
         return True if item_name in self.all_shop else False
     
-    def buy_item(self, item_name):
+    def buy_item(self, item):
         """Attempts to buy an item from the shop.
         
         Args:
-            item_name (str): The name of the item to be bought
+            item (str): The name of the item to be bought
                         
         Returns:
             Bool: True if the item is bought. False if the item name isn't valid 
@@ -162,24 +162,21 @@ class Shop:
             # Modifies attributes owned_recipes or ad_level if the item is bought. (if we move these)
         """
         
-        if item_name in self.unlockable:
-            if self.unlockable[item_name] == "Owned":
-                pass
-            else:
-                if item_name in self.recipes:
-                    self.unlockable[item_name] == "Owned"
-                    self.owned_recipes[item_name] == self.shopdata["Recipes"][item_name]
-                    self.owned_recipes.update({item_name:self.shopdata["Recipes"][item_name]})
-                    print(f"You purchased {item_name}!")
-                        ## added owned_recipes to Shop
-                elif item_name in self.ad_levels:
-                    self.unlockable["Level 1"] = "" # for a in self.ad_levels:
-                    self.unlockable["Level 2"] = "" #     self.unlockable[a] = "" ## OR "Locked" (check note in __str__ for context)
-                    self.unlockable["Level 3"] = "" # self.unlockable[item_name] = "Owned"
-                    self.unlockable[item_name] = "Owned"
-                    self.ad_level.clear()     ## so that there's only one value for current ad level
-                    self.ad_level.update({item_name:self.shopdata["Ad levels"][item_name]})
-                    print(f"You purchased {item_name}")
+        # if item in self.unlockable:
+        if self.unlockable[item] == "Owned":
+            pass
+        else:
+            if item in self.recipes:
+                self.unlockable[item] = "Owned"
+                self.owned_recipes.update({item:self.shopdata["Recipes"][item]})
+                print(f"You purchased {item}.")
+            elif item in self.ad_levels:
+                for a in self.ad_levels:
+                    self.unlockable[a] = "Locked" ## to match start of game
+                self.unlockable[item] = "Owned"
+                self.ad_level.clear()     ## so that there's only one value for current ad level
+                self.ad_level.update({item:self.shopdata["Ad levels"][item]})
+                print(f"You purchased {item}.")
 
 class Game:
     """Play Bakery Simulator.
@@ -207,21 +204,6 @@ class Game:
             
         self.shop = Shop(shop_path)
         self.profit = 0
-        
-    # def unlock_item(self, item_name):
-    #     """Unlocks an item.
-        
-    #     Args: 
-    #         item_name (str): the name of the item to be unlocked.
-            
-    #     Side Effects:
-    #         Modifies owned_recipes and ad_level attributes.
-    #     """
-    #     if item_name in self.shop.shopdata["Recipes"]:
-    #         self.shop.owned_recipes[item_name] = self.shop.shopdata["Recipes"][item_name]
-    #     elif item_name in self.shop.shopdata["Ad levels"]:
-    #         self.shop.ad_level = {item_name : self.shop.shopdata["Ad levels"][item_name]}
-    # ## can remove this function if we add owned_recipes and ad_level to Shop
             
     def valid_request(self, request):
         """Ensure that the player's input for a menu option request is valid.
@@ -256,17 +238,9 @@ class Game:
             Terminates program if the player inputs "end"
         """
         if request == 'recipes':
-            # recipes = [f"{r}: {self.owned_recipes[r]}" 
-            #            for r in self.owned_recipes]
             recipes = [f"\n{r}: {self.shop.owned_recipes[r]}" 
                        for r in self.shop.owned_recipes]
-            ## ^ if we add owned_recipes to Shop
-            
-            # recipes = [f"{r}: {self.shop.shopdata["Recipes"][r]}" 
-            #            for r in self.shop.recipes 
-            #            if self.shop.unlockable[r] == "Owned"]
-                ## ^ if we remove owned_recipes
-            print("------ Your Recipes ------\n"
+            print("\n------ Your Recipes ------"
                 f"{'\n'.join(recipes)}\n")
         elif request == 'shop':
             print(self.shop)
@@ -274,7 +248,7 @@ class Game:
         elif request == 'continue':
             self.day_profit()
         elif request == 'end':
-            print("Thanks for playing!")
+            print("\nThanks for playing!")
             quit()
             
     def prompt_request(self):
@@ -290,19 +264,17 @@ class Game:
                     "[recipes] to review your recipes\n"
                     "[shop] to browse the shop\n"
                     "[continue] to continue to the next day\n"
-                    "[end] to end the game\n"
+                    "[end] to end the game\n>>> "
                     )
-        request = input(menu_options)
-        validated = self.valid_request(request.lower())
+        request = input(menu_options).lower()
+        validated = self.valid_request(request)
         while validated == 'invalid':
-            print("That's not a valid menu option. Try again!")
-            request = input(menu_options)
-            validated = self.valid_request(request.lower())
+            request = input("That's not a menu option. Try again!\n>>> ").lower()
+            validated = self.valid_request(request)
         self.fulfill_request(validated)
-        more = input("Would you like to select another menu option? (Y/N). ")
+        more = input("Would you like to select another menu option? (Y/N)\n>>> ")
         while more.lower() not in ('y', 'n'):
-            print("That's not a valid option. Try again!")
-            more = input("Would you like to select another menu option? (Y/N). ")
+            more = input("That's not a valid option. Try again!\n>>> ")
         if more.lower() == 'y':
             self.prompt_request()
         elif more.lower() == 'n':
@@ -330,55 +302,60 @@ class Game:
             return None
         current_level = list(self.shop.ad_level)[0]
         num_customers = self.shop.shopdata["Ad levels"][current_level]
+        order_amt = choice(self.shop.shopdata["Order amounts"])
         customers = self.create_customers(num_customers)
-        revenue = 0
+        # revenue = 0
+        revenue = 100 # for testing
             
         for c in customers:
-            # current_dish = choice(list(self.owned_recipes)) ## owned_recipes in Shop
             current_dish = choice(list(self.shop.owned_recipes))
             price = self.shop.shopdata["Selling prices"][current_dish]
-            # score = handle_dish(current_dish, self.owned_recipes, c) ## owned_recipes in Shop
-            score = handle_dish(current_dish, self.shop.owned_recipes, c)
+            score = handle_dish(current_dish, self.shop.owned_recipes, c, order_amt)
             revenue += (price * (score / 2))
-            revenue += ((price * choice(self.shop.shopdata["Order amounts"])) 
-                        + (score)/2) ## added order amounts from JSON file
+            revenue += ((price * order_amt) + (score)/2) ## added order amounts from JSON file
             ## changed selling_price to price to make it a line under 80 chars {crying emoji}
 
         if expense_rate is None:
             expense_rate = random.rand() * 0.25
-        expenses = round(revenue * expense_rate, 2)
+        expenses = round(revenue * expense_rate, 2) 
         daily_profit = round(revenue - expenses, 2)
         self.profit += daily_profit
 
         print("------ Today's Stats ------\n"
             f"Customers served: {len(customers)}\n"
-            f"Revenue: {round(revenue, 2)}\n"
-            f"Expenses: {expenses}\n"
-            f"Daily profit: {daily_profit}\n"
-            f"Total profit: {round(self.profit, 2)}\n"
+            f"Revenue: ${'{:,.2f}'.format(revenue)}\n"
+            f"Expenses: ${'{:,.2f}'.format(expenses)}\n"
+            f"Daily profit: ${'{:,.2f}'.format(daily_profit)}\n"
+            f"Total profit: ${'{:,.2f}'.format(self.profit)}"
         )
         self.prompt_request()
     
     def run_shop(self):
         """
         """
-        print("\nWhat would you like to do?")
-        player_in = input("[buy] to buy an item\n[leave] to leave shop\n")
-        while player_in not in ('buy', 'leave'):
-            player_in = input("That's not a valid input. Try again! ").capitalize()
-        if player_in == "buy":
-            item = input("What would you like to purchase? ").capitalize() ##
+        print("\n----- Shop Options ------")
+        player_in = input("[buy] to buy an item\n[leave] to leave shop\n>>> ")
+        while player_in.lower() not in ('buy', 'leave'):
+            player_in = input("That's not a valid option. Try again!\n>>> ")
+        if player_in.lower() == "buy":
+            item = input("\nWhat would you like to buy?\n>>> ").capitalize()
+            if item.lower() == "q":
+                self.prompt_request()
             while not self.shop.check_item(item):
-                item = input("That's not a shop item. Try again! ").capitalize()
+                item = input("That's not a shop item. Try again!\n>>> ").capitalize()
             if self.shop.check_item(item):
-                if self.shop.get_price(item) <= self.profit:
+                if self.shop.unlockable[item] == "Owned":
+                    print("*You already own this item!\n")
+                elif self.shop.get_price(item) <= self.profit:
                     self.shop.buy_item(item)
-                    print("Thank you for your business!\n")
+                    print("Thank you for your business!")
+                    self.run_shop()
                 elif self.shop.get_price(item) > self.profit:
-                    print("You can't afford this item.\n")
+                    print("*You can't afford this item.\n")
+                    self.run_shop()
             # else:
-            #     print("We don't have this item.\n") ## what 'while item not in shop' does
-        elif player_in == "leave":
+            #     print("We don't have this item.\n") ## what 'while not self.shop.check_item' does
+        elif player_in.lower() == "leave":
             print("Thanks for stopping by!\n")
             self.prompt_request() ## go back to menu options ?
             
@@ -410,7 +387,7 @@ class Game:
             customer_final (list): A list of customer names.
         """ 
         customer_final = []
-        indices = []
+        # indices = []
         
         count = 0 
         while count < num:
@@ -435,7 +412,7 @@ class Game:
 
 #Kyle Tice's Function
 
-def handle_dish(current_dish, recipe_dict, customer_name):
+def handle_dish(current_dish, recipe_dict, customer_name, order_amt):
     """
 
     Author: Kyle Tice (with customer logic from Ethan Gustave)
@@ -461,9 +438,10 @@ def handle_dish(current_dish, recipe_dict, customer_name):
     
     shuffled = correct_order[:]
     shuffle(shuffled)
-    print(f"{customer_name} walked in!")
-    print(f"\nDish: {current_dish}")
-    print("Ingredients (shuffled):")
+    # print(f"{customer_name} walked in!")
+    print(f"{customer_name} ordered {order_amt} {current_dish}!\n")
+    # print(f"\nDish: {current_dish}")
+    print(f"{current_dish}' shuffled recipe:")
 
     # builds the user-inputted list of ingredients
     for ingredient in shuffled:
@@ -480,10 +458,9 @@ def handle_dish(current_dish, recipe_dict, customer_name):
         if user_input == 'q':
             quit()
 
-    print("Cooking...\n")
+    print("\nCooking...\n")
     time.sleep(.5)
     print("Done!")
-    time.sleep(.5)
     score = rate_dish(user_list, correct_order)
     print(f"\nYou scored: {score}/4\n")
 
