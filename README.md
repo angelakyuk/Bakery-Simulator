@@ -43,7 +43,7 @@ draft written by Angela Kyuk and edited by Ethan Gustave.
 # Attribution
 |  Method/Function | Primary Author | Technique Demonstrated |
 | ---------------  | -------------- | ---------------------- |
-| `day_profit`     | Sarayu Vanam   | Optional parameters     |
+| `day_profit`     | Sarayu Vanam   | Optional parameters    |
 | `parse_args`     | Sarayu Vanam   | ArgumentParser         |
 | `__str__`        | Angela Kyuk    | Magic method that's not `__init__` |
 | `__init__` (Shop)| Angela Kyuk    | Comprehensions|

@@ -323,7 +323,7 @@ class Game:
             revenue += (selling_price * (score / 2))
 
         if expense_rate is None:
-            expense_rate = random.rand()
+            expense_rate = random.rand() * 0.25
             
         expenses = round(revenue * expense_rate, 2)
         daily_profit = revenue - expenses
@@ -333,6 +333,7 @@ class Game:
             f"customers_served: {len(customers)}\n"
             f"revenue: {round(revenue, 2)}\n"
             f"expenses: {expenses}\n"
+            f"expense_rate: {expense_rate}\n"
             f"daily_profit: {daily_profit}\n"
             f"total_profit: {round(self.profit, 2)}\n"
         )
@@ -392,13 +393,20 @@ def create_customers(num, customer_path):
     
     count = 0 
     while count < num:
-        curr = choice(customer_start)
-        if customer_start[curr] in indicies:
-            count -= 1
+        #curr = choice(customer_start)
+        #if customer_start[curr] in indicies:
+            #count -= 1
+        
+        curr = choice(customer_start).strip()
+
+        if curr not in indicies:
+            customer_final.append(curr)
+            indicies.append(curr)
+            count += 1
         else:
             customer_final.append(curr)
             indicies.append(customer_start[curr])
-        count += 1
+        #count += 1
        
     return customer_final
 
