@@ -317,6 +317,8 @@ class Game:
     def day_profit(self, show_stats=True, expense_rate=None):
         """Calculate daily profit, expenses, and total profit.
         
+        Author: Sarayu Vanam
+        
         Args:
             show_stats (bool): Method does nothing if False. Method executes as 
                 normal if True. Defaults to True.
@@ -559,6 +561,15 @@ def main(shop_path, customer_path, expense_rate=None):
     game.start()
     
 def parse_args():
+    """
+    Do parse command-line arguments.
+    
+    Author: Sarayu Vanam
+
+    Returns:
+        argparse.Namespace: Parsed arguments with shop_path, customer_path,
+        and --expense-rate.
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument("shop_path")
     parser.add_argument("customer_path")
