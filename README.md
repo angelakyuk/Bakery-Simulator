@@ -3,6 +3,7 @@ A text-based bakery simulator game.
 
 # How to run Bakery Simulator
 To play the game, enter the files simulator_main.py and shop_data.JSON (e.g. python3 simulator_main.py shop_data.JSON).
+It's optional but if you want to enter an expense_rate you can add the command --expense-rate $rate at the end. (e.g. python3 simulator_main.py shop_data.JSON --expense-rate 0.25)
 
 User input notes: 
 * Entering "n" when asked if you want another menu option automatically starts the next round.
@@ -43,8 +44,8 @@ draft written by Angela Kyuk and edited by Ethan Gustave.
 # Attribution
 |  Method/Function | Primary Author | Technique Demonstrated |
 | ---------------  | -------------- | ---------------------- |
-| `day_profit`     | Sarayu Vanam   | Optional parameters     |
-| `parse_args`     | Sarayu Vanam   | ArgumentParser class from argparse module |
+| `day_profit`     | Sarayu Vanam   | Optional parameters    |
+| `parse_args`     | Sarayu Vanam   | ArgumentParser         |
 | `__str__`        | Angela Kyuk    | Magic method that's not `__init__` |
 | `__init__` (Shop)| Angela Kyuk    | Comprehensions|
 | `check_item`     | Ethan Gustave  | Conditional expression | 

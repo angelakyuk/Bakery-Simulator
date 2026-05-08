@@ -1,6 +1,7 @@
 from numpy import random
 from random import choice, shuffle
 import json
+import argparse
 
 class Shop:
     """Provide and update information about shop items.
@@ -236,7 +237,7 @@ class Game:
             else:
                 return 'invalid'
             
-    def fulfill_request(self, request, customerdata):
+    def fulfill_request(self, request, customerdata, expense_rate=None):
         """Carry out the player's menu option request.
     
         Args:
@@ -264,12 +265,12 @@ class Game:
             print(self.shop)
             self.run_shop()
         elif request == 'continue':
-            self.day_profit(customerdata)
+            self.day_profit(customerdata, expense_rate)
         elif request == 'end game':
             print("Thanks for playing!")
             quit()
             
-    def prompt_request(self, customerdata):
+    def prompt_request(self, customerdata, expense_rate=None):
         """Prompt player for menu option requests and carry them out.
     
         Side effects:
@@ -288,15 +289,15 @@ class Game:
             print("That's not a valid menu option. Try again!")
             request = input(menu_options)
             validated = self.valid_request(request.lower())
-        self.fulfill_request(validated, customerdata)
+        self.fulfill_request(validated, customerdata, expense_rate)
         more = input("Would you like to select another menu option? (Y/N). ")
         while more.lower() not in ('y', 'n'):
             print("That's not a valid option. Try again!")
             more = input("Would you like to select another menu option? (Y/N). ")
         if more.lower() == 'y':
-            self.prompt_request()
+            self.prompt_request(customerdata, expense_rate)
         elif more.lower() == 'n':
-            self.fulfill_request('continue', customerdata)
+            self.fulfill_request('continue', customerdata, expense_rate)
     
     def day_profit(self, customerpath, expense_rate = None):
         """Calculate daily profit, expenses, and total profit.
@@ -322,10 +323,10 @@ class Game:
             revenue += (selling_price * (score / 2))
 
         if expense_rate is None:
-            expense_rate = random.rand()
+            expense_rate = random.rand() * 0.25
             
         expenses = round(revenue * expense_rate, 2)
-        daily_profit = revenue - expenses
+        daily_profit = round(revenue - expenses, 2)
         self.profit += daily_profit
 
         print("------ Today's Stats ------\n"
@@ -391,13 +392,20 @@ def create_customers(num, customer_path):
     
     count = 0 
     while count < num:
-        curr = choice(customer_start)
-        if customer_start[curr] in indicies:
-            count -= 1
+        #curr = choice(customer_start)
+        #if customer_start[curr] in indicies:
+            #count -= 1
+        
+        curr = choice(customer_start).strip()
+
+        if curr not in indicies:
+            customer_final.append(curr)
+            indicies.append(curr)
+            count += 1
         else:
             customer_final.append(curr)
             indicies.append(customer_start[curr])
-        count += 1
+        #count += 1
        
     return customer_final
 
@@ -502,7 +510,20 @@ def rate_dish(user_list, correct_list):
     return score
 
 
-def main(filepath, customerpath):
+def main(filepath, customerpath, expense_rate=None):
     game = Game(filepath)
+    game.prompt_request(customerpath, expense_rate)
     
-    game.prompt_request(customerpath)
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("filepath")
+    parser.add_argument("customerpath")
+    parser.add_argument("--expense-rate", type=float, default=None)
+    return parser.parse_args()
+
+if __name__ == "__main__":
+    args = parse_args()
+    main(args.filepath, args.customerpath, args.expense_rate)
+
+
+    
