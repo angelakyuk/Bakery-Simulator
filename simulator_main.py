@@ -109,10 +109,12 @@ class Shop:
         Returns: 
             int: The purchase price of the item.
         """
-        if item_name in self.recipes:
-            return self.recipe_shop[item_name][0]
-        elif item_name in self.ad_levels:
-            return self.ad_shop[item_name][0]
+        return(self.recipe_shop[item_name][1])
+        ## will this be used for only recipes? if not, consider this code
+        # if item in self.recipes:
+            # return self.recipe_shop[item][0]
+        # elif item in self.ad_levels:
+            # return self.ad_shop[item][0]
     
     def owned(self, item_name):
         """Checks if item is owned.
@@ -139,11 +141,13 @@ class Shop:
         Returns:
             Bool: True if item is valid. False if item is invalid.
             """
-        # if item_name in self.recipe_shop:
-        #     return True
-        # else:
-        #     return True if item_name in self.ad_shop else False
-        return True if item_name in self.all_shop else False
+        if item_name in self.recipe_shop:
+            return True
+        else:
+            return True if item_name in self.ad_shop else False
+        # return True if item in self.all_shop else False
+            ## all_shop has the names of all shop items. ^ conditional expr is equiv 
+            ## to the entire conditional statement (if it's right)
     
     def buy_item(self, item_name):
         """Attempts to buy an item from the shop.
@@ -168,17 +172,15 @@ class Shop:
             else:
                 if item_name in self.recipes:
                     self.unlockable[item_name] == "Owned"
-                    print(f"You purchased {item_name}")
-                    self.owned_recipes.update({item_name:self.shopdata["Recipes"][item_name]})
+                    self.owned_recipes[item_name] == self.shopdata["Recipes"][item_name]
                         ## added owned_recipes to Shop
-                elif item_name in self.ad_levels:
+                if item_name in self.ad_levels:
                     self.unlockable["Level 1"] = "" # for a in self.ad_levels:
                     self.unlockable["Level 2"] = "" #     self.unlockable[a] = "" ## OR "Locked" (check note in __str__ for context)
                     self.unlockable["Level 3"] = "" # self.unlockable[item_name] = "Owned"
                     self.unlockable[item_name] = "Owned"
                     self.ad_level.clear()     ## so that there's only one value for current ad level
-                    self.ad_level.update({item_name:self.shopdata["Ad levels"][item_name]})
-                    print(f"You purchased {item_name}")
+                    self.ad_level[item_name] == self.shopdata["Ad levels"][item_name]
                         ## added ad_level to Shop
                         ## or we could remove owned_recipes and ad_level entirely and use self.unlockable
 
@@ -214,19 +216,19 @@ class Game:
         # self.ad_level = {"Level 1":self.shop.shopdata["Ad levels"]["Level 1"]}
         self.profit = 0
         
-    # def unlock_item(self, item_name):
-    #     """Unlocks an item.
+    def unlock_item(self, item_name):
+        """Unlocks an item.
         
-    #     Args: 
-    #         item_name (str): the name of the item to be unlocked.
+        Args: 
+            item_name (str): the name of the item to be unlocked.
             
-    #     Side Effects:
-    #         Modifies owned_recipes and ad_level attributes.
-    #     """
-    #     if item_name in self.shop.shopdata["Recipes"]:
-    #         self.shop.owned_recipes[item_name] = self.shop.shopdata["Recipes"][item_name]
-    #     elif item_name in self.shop.shopdata["Ad levels"]:
-    #         self.shop.ad_level = {item_name : self.shop.shopdata["Ad levels"][item_name]}
+        Side Effects:
+            Modifies owned_recipes and ad_level attributes.
+        """
+        if item_name in self.shop.shopdata["Recipes"]:
+            self.shop.owned_recipes[item_name] = self.shop.shopdata["Recipes"][item_name]
+        elif item_name in self.shop.shopdata["Ad levels"]:
+            self.shop.ad_level = {item_name : self.shop.shopdata["Ad levels"][item_name]}
     ## can remove this function if we add owned_recipes and ad_level to Shop
             
     def valid_request(self, request):
@@ -243,7 +245,7 @@ class Game:
         if not isinstance(request, str):
             return 'invalid'
         else:
-            if request in ('shop', 'recipes', 'continue', 'end'):
+            if request in ('shop', 'recipes', 'continue', 'end game'):
                 return request
             else:
                 return 'invalid'
@@ -335,7 +337,7 @@ class Game:
         if not show_stats:
             return None
         # current_level = list(self.ad_level)[0]
-        current_level = list(self.shop.ad_level)[0]
+        current_level = list(self.shop.ad_level)[0] 
             ## if we move ad_level to Shop
         num_customers = self.shop.shopdata["Ad levels"][current_level]
         customers = self.create_customers(num_customers)
@@ -348,10 +350,9 @@ class Game:
             # score = handle_dish(current_dish, self.owned_recipes, c) ## owned_recipes in Shop
             score = handle_dish(current_dish, self.shop.owned_recipes, c)
             revenue += (price * (score / 2))
-            # revenue += ((price * choice(self.shop.shopdata["Order amounts"])) 
-            #             + (score)/2) ## added order amounts from JSON file
+            revenue += ((price * choice(self.shop.shopdata["Order amounts"])) 
+                        + (score)/2) ## added order amounts from JSON file
             ## changed selling_price to price to make it a line under 80 chars {crying emoji}
-            revenue += (100) # for testing
 
         if expense_rate is None:
             expense_rate = random.rand() * 0.25
@@ -374,18 +375,16 @@ class Game:
         print("\nWhat would you like to do?")
         player_in = input("[buy] to buy an item\n[leave] to leave shop\n")
         while player_in not in ('buy', 'leave'):
-            player_in = input("That's not a valid input. Try again! ").capitalize()
+            player_in = input("That's not a valid input. Try again! ")
         if player_in == "buy":
             item = input("What would you like to purchase? ").capitalize() ##
-            # while item not in self.shop.all_shop:
-            #     item = input("That's not a shop item. Try again! ").capitalize()
-                ## ^ this does what check_item does but gives user unlimited retries
-            while not self.shop.check_item(item):
+            while item not in self.shop.all_shop:
                 item = input("That's not a shop item. Try again! ").capitalize()
+                ## ^ this does what check_item does but gives user unlimited retries
             if self.shop.check_item(item): # <
                 if self.shop.get_price(item) <= self.profit:
                     if self.profit >= self.shop.get_price(item):
-                        # self.unlock_item(item)
+                        self.unlock_item(item)
                         self.shop.buy_item(item)
                         print("Thank you for your business!\n")
                 else:
@@ -435,23 +434,23 @@ class Game:
         
         count = 0 
         while count < num:
-            curr = choice(self.customers).strip()
-            customer_final.append(curr)
-            count += 1
-        return customer_final
+        #     curr = choice(self.customers).strip()
+        #     customer_final.append(curr)
+        #     count += 1
+        # return customer_final
             
-            # curr = choice(self.customers).strip()
+            curr = choice(self.customers).strip()
 
-            # if curr not in indices:
-            #     customer_final.append(curr)
-            #     indices.append(curr)
-            #     count += 1
-            # else:
-            #     customer_final.append(curr)
-            #     indices.append(self.customers[curr])
+            if curr not in indices:
+                customer_final.append(curr)
+                indices.append(curr)
+                count += 1
+            else:
+                customer_final.append(curr)
+                indices.append(self.customers[curr])
             #count += 1
         
-        # return customer_final
+        return customer_final
 
 
 #Kyle Tice's Function
@@ -557,7 +556,7 @@ def rate_dish(user_list, correct_list):
 
 def main(shop_path, customer_path, expense_rate=None):
     game = Game(shop_path, customer_path)
-    game.day_profit(False, expense_rate)
+    game.day_profit(False, customer_path)
     game.start()
     
 def parse_args():
