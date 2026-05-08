@@ -10,10 +10,10 @@ class Shop:
             self.shopdata = dict(json.load(f))
         
         self.recipes = [r for r in self.shopdata["Recipes"]]
-        self.ad_levels = [a for a in self.shopdata["Ad Levels"]]
+        self.ad_levels = [a for a in self.shopdata["Ad levels"]]
         # self.owned_recipes = {"Sugar cookies":self.shopdata["Recipes"]["Sugar cookies"]}
         self.owned_recipes = {r : self.shopdata["Recipes"][r] for r in self.recipes}
-        self.ad_level = {"Level 1":self.shopdata["Ad Levels"]["Level 1"]}
+        self.ad_level = {"Level 1":self.shopdata["Ad levels"]["Level 1"]}
         self.profit = 0
         
         all_shop = self.recipes + self.ad_levels
@@ -26,7 +26,7 @@ class Shop:
                                  self.shopdata["Selling prices"][r]) 
                             for r in self.recipes}
         self.ad_shop = {a : (self.shopdata["Ad prices"][a], 
-                             self.shopdata["Ad Levels"][a]) 
+                             self.shopdata["Ad levels"][a]) 
                         for a in self.ad_levels}
         
     def __str__(self):
@@ -103,7 +103,7 @@ class Shop:
         
         current_level = list(self.ad_level)[0]
         # 3
-        num_customers = self.shopdata["Ad Levels"][current_level]
+        num_customers = self.shopdata["Ad levels"][current_level]
         # 3
         revenue = 0
         expenses = 0
