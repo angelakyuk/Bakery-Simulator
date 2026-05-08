@@ -188,7 +188,7 @@ class Game:
         shop (Shop): The instance of Shop used in this game.
         profit (int): The amount of money the player currently has.
     """
-    def __init__(self, path):
+    def __init__(self, shop_path, customer_path):
         """Initialize Game object.
         
         Args:
@@ -197,7 +197,10 @@ class Game:
         Side effects: 
             Sets attributes shop and profit.
         """
-        self.shop = Shop(path)
+        with open(customer_path, 'r') as f:
+            self.customers = f.readlines()
+            
+        self.shop = Shop(shop_path)
         self.owned_recipes = {"Sugar cookies":self.shop.shopdata["Recipes"]
                               ["Sugar cookies"]}
         self.ad_level = {"Level 1":self.shop.shopdata["Ad levels"]["Level 1"]}
@@ -242,7 +245,6 @@ class Game:
     
         Args:
             request (str): The player's menu option request.
-            customerdata
     
         Side effects:
             Prints to stdout.
@@ -369,45 +371,40 @@ class Game:
         if player_in == "leave":
             print("Thanks for stopping by!\n")
 
-
 #Ethan Gustave's Function
 
-def create_customers(num, customer_path):
-    """Creates a list of customers from the amount specified for the day
+    def create_customers(self, num, customer_path):
+        """Creates a list of customers from the amount specified for the day
 
-    Args: 
-	    num(int): the number of customers to be generated based on ad level.
-	    customers_path(str): the path of the txt file to be used to import
-            customer names.
+        Args: 
+            num(int): the number of customers to be generated based on ad level.
+            customers_path(str): the path of the txt file to be used to import
+                customer names.
 
-    Returns: 
-        customer_final (list): A list of customer names.
-    """
-    
-    with open(customer_path, 'r') as f:
-        customer_start = f.readlines()
+        Returns: 
+            customer_final (list): A list of customer names.
+        """ 
+        customer_final = []
+        indices = []
         
-    customer_final = []
-    indicies = []
-    
-    count = 0 
-    while count < num:
-        #curr = choice(customer_start)
-        #if customer_start[curr] in indicies:
-            #count -= 1
-        
-        curr = choice(customer_start).strip()
+        count = 0 
+        while count < num:
+            #curr = choice(customer_start)
+            #if customer_start[curr] in indicies:
+                #count -= 1
+            
+            curr = choice(self.customers).strip()
 
-        if curr not in indicies:
-            customer_final.append(curr)
-            indicies.append(curr)
-            count += 1
-        else:
-            customer_final.append(curr)
-            indicies.append(customer_start[curr])
-        #count += 1
-       
-    return customer_final
+            if curr not in indices:
+                customer_final.append(curr)
+                indices.append(curr)
+                count += 1
+            else:
+                customer_final.append(curr)
+                indices.append(self.customers[curr])
+            #count += 1
+        
+        return customer_final
 
 
 #Kyle Tice's Function
@@ -524,6 +521,3 @@ def parse_args():
 if __name__ == "__main__":
     args = parse_args()
     main(args.filepath, args.customerpath, args.expense_rate)
-
-
-    
