@@ -288,7 +288,7 @@ class Game:
         Args:
             show_stats (bool): Method does nothing if False. Method executes as 
                 normal if True. Defaults to True.
-            expense_rate (None or int): A set amount of money going towards 
+            expense_rate (None or float): A set amount of money going towards 
                 expenses.
                 
         Returns:
@@ -302,21 +302,27 @@ class Game:
             return None
         current_level = list(self.shop.ad_level)[0]
         num_customers = self.shop.shopdata["Ad levels"][current_level]
-        order_amt = choice(self.shop.shopdata["Order amounts"])
         customers = self.create_customers(num_customers)
-        # revenue = 0
-        revenue = 100 # for testing
+        revenue = 0
             
         for c in customers:
             current_dish = choice(list(self.shop.owned_recipes))
+            order_amt = choice(self.shop.shopdata["Order amounts"])
             price = self.shop.shopdata["Selling prices"][current_dish]
             score = handle_dish(current_dish, self.shop.owned_recipes, c, order_amt)
-            revenue += (price * (score / 2))
-            revenue += ((price * order_amt) + (score)/2) ## added order amounts from JSON file
+            # revenue += (price * (score / 2))
+            revenue += ((price * order_amt) + score) ## added order amounts from JSON file
             ## changed selling_price to price to make it a line under 80 chars {crying emoji}
 
         if expense_rate is None:
-            expense_rate = random.rand() * 0.25
+            expense_rate = 1.0 ## for testing
+            # random.rand() # * 0.25
+        
+        # self.expense_rate = expense_rate
+        # if self.expense_rate is None:
+        #     self.expense_rate = 1 # for testing
+        #     #random.rand() # * 0.25
+            
         expenses = round(revenue * expense_rate, 2) 
         daily_profit = round(revenue - expenses, 2)
         self.profit += daily_profit
@@ -327,6 +333,7 @@ class Game:
             f"Expenses: ${'{:,.2f}'.format(expenses)}\n"
             f"Daily profit: ${'{:,.2f}'.format(daily_profit)}\n"
             f"Total profit: ${'{:,.2f}'.format(self.profit)}"
+            f"\nExpense rate: {expense_rate}" # for testing
         )
         self.prompt_request()
     
@@ -441,7 +448,7 @@ def handle_dish(current_dish, recipe_dict, customer_name, order_amt):
     # print(f"{customer_name} walked in!")
     print(f"{customer_name} ordered {order_amt} {current_dish}!\n")
     # print(f"\nDish: {current_dish}")
-    print(f"{current_dish}' shuffled recipe:")
+    print(f"Shuffled recipe:")
 
     # builds the user-inputted list of ingredients
     for ingredient in shuffled:
@@ -512,8 +519,8 @@ def rate_dish(user_list, correct_list):
 
 
 def main(shop_path, customer_path, expense_rate=None):
-    game = Game(shop_path, customer_path)
-    game.day_profit(False, expense_rate)
+    game = Game(shop_path, customer_path, expense_rate)
+    # game.day_profit(False, expense_rate)
     game.start()
     
 def parse_args():
