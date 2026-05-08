@@ -5,7 +5,12 @@ Objective:
 Rules:
 
 # How to run Bakery Simulator
+<<<<<<< HEAD
 To play the game, enter the files simulator_main.py, shop_data.JSON, customers.txt (e.g. python3 simulator_main.py shop_data.JSON customers.txt).
+=======
+To play the game, enter the files simulator_main.py and shop_data.JSON (e.g. python3 simulator_main.py shop_data.JSON).
+
+>>>>>>> 6540b309aa214a067adc7fd67f7e0ae22057b192
 It's optional but if you want to enter an expense_rate you can add the command --expense-rate $rate at the end. (e.g. python3 simulator_main.py shop_data.JSON --expense-rate 0.25)
 
 User input notes: 
