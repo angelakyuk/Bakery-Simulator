@@ -3,6 +3,7 @@ A text-based bakery simulator game.
 
 # How to run Bakery Simulator
 To play the game, enter the files simulator_main.py and shop_data.JSON (e.g. python3 simulator_main.py shop_data.JSON).
+
 It's optional but if you want to enter an expense_rate you can add the command --expense-rate $rate at the end. (e.g. python3 simulator_main.py shop_data.JSON --expense-rate 0.25)
 
 User input notes: 
