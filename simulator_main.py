@@ -304,6 +304,7 @@ class Game:
         num_customers = self.shop.shopdata["Ad levels"][current_level]
         customers = self.create_customers(num_customers)
         revenue = 0
+        total_tips = 0
             
         for c in customers:
             current_dish = choice(list(self.shop.owned_recipes))
@@ -311,12 +312,13 @@ class Game:
             price = self.shop.shopdata["Selling prices"][current_dish]
             score = handle_dish(current_dish, self.shop.owned_recipes, c, order_amt)
             # revenue += (price * (score / 2))
-            revenue += ((price * order_amt) + score) ## added order amounts from JSON file
+            total_tips += score/2
+            revenue += ((price * order_amt) + (score/2)) ## added order amounts from JSON file
             ## changed selling_price to price to make it a line under 80 chars {crying emoji}
 
         if expense_rate is None:
-            expense_rate = 1.0 ## for testing
-            # random.rand() # * 0.25
+            # expense_rate = 1.0 ## for testing
+            expense_rate = random.rand() * 0.25
         
         # self.expense_rate = expense_rate
         # if self.expense_rate is None:
@@ -329,6 +331,7 @@ class Game:
 
         print("------ Today's Stats ------\n"
             f"Customers served: {len(customers)}\n"
+            f"Tips: ${'{:,.2f}'.format(total_tips)}\n"
             f"Revenue: ${'{:,.2f}'.format(revenue)}\n"
             f"Expenses: ${'{:,.2f}'.format(expenses)}\n"
             f"Daily profit: ${'{:,.2f}'.format(daily_profit)}\n"
@@ -372,9 +375,7 @@ class Game:
         Returns:
             _type_: _description_
         """
-        print("\nWelcome to Bakery Simulator!\n")
-        print("Your job is to type ingredients in the correct order, given a scrambled recipe. ")
-        print("The more ingredients you get right, the higher your score and tips. ")
+        print("\nWelcome to Bakery Simulator!")
         print("To learn more about how to play, check the README.md file!\n")
         start = input("Press enter to start baking :D\n")
         if start or not start:
@@ -505,7 +506,7 @@ def rate_dish(user_list, correct_list):
     )
 
     # displays the ranking of the user's ingredients
-    print("\nRanked ingredients (best to worst):")
+    print("\nRanked ingredients (correct to incorrect):")
     for item in ranked:
         print(f"- {item}")
 
@@ -519,8 +520,8 @@ def rate_dish(user_list, correct_list):
 
 
 def main(shop_path, customer_path, expense_rate=None):
-    game = Game(shop_path, customer_path, expense_rate)
-    # game.day_profit(False, expense_rate)
+    game = Game(shop_path, customer_path)
+    game.day_profit(False, expense_rate)
     game.start()
     
 def parse_args():
