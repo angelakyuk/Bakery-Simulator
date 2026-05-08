@@ -109,7 +109,7 @@ class Shop:
         Returns: 
             int: The purchase price of the item.
         """
-        return(self.recipe_shop(item_name[1]))
+        return(self.recipe_shop[item_name][1])
         ## will this be used for only recipes? if not, consider this code
         # if item in self.recipes:
             # return self.recipe_shop[item][0]
@@ -226,9 +226,9 @@ class Game:
             Modifies owned_recipes and ad_level attributes.
         """
         if item_name in self.shop.shopdata["Recipes"]:
-            self.owned_recipes[item_name] = self.shop.shopdata["Recipes"][item_name]
+            self.shop.owned_recipes[item_name] = self.shop.shopdata["Recipes"][item_name]
         elif item_name in self.shop.shopdata["Ad levels"]:
-            self.ad_level = {item_name : self.shop.shopdata["Ad levels"][item_name]}
+            self.shop.ad_level = {item_name : self.shop.shopdata["Ad levels"][item_name]}
     ## can remove this function if we add owned_recipes and ad_level to Shop
             
     def valid_request(self, request):
