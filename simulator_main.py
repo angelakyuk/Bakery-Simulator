@@ -326,14 +326,13 @@ class Game:
             expense_rate = random.rand() * 0.25
             
         expenses = round(revenue * expense_rate, 2)
-        daily_profit = revenue - expenses
+        daily_profit = round(revenue - expenses, 2)
         self.profit += daily_profit
 
         print("------ Today's Stats ------\n"
             f"customers_served: {len(customers)}\n"
             f"revenue: {round(revenue, 2)}\n"
             f"expenses: {expenses}\n"
-            f"expense_rate: {expense_rate}\n"
             f"daily_profit: {daily_profit}\n"
             f"total_profit: {round(self.profit, 2)}\n"
         )
