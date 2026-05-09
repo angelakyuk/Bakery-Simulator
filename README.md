@@ -108,7 +108,7 @@ Second draft written by Angela Kyuk and edited by Ethan Gustave.
 | `parse_args`     | Sarayu Vanam   | ArgumentParser         |
 | `__str__`        | Angela Kyuk    | Magic method that's not `__init__` |
 | `__init__` (Shop)| Angela Kyuk    | Comprehensions|
-| `check_item`     | Ethan Gustave  | Conditional expression | 
+| `owned`          | Ethan Gustave  | Conditional expression | 
 | `create_customer`| Ethan Gustave  | `with` statement       |
 | `handle_dish`    | Kyle Tice      | f-string containing an expression |
 | `rate_dish`      | Kyle Tice      | key function (lambda) with sorted |
