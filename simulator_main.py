@@ -121,6 +121,7 @@ class Shop:
     
     def owned(self, item):
         """Checks if item is owned.
+        
         Author: Ethan Gustave
         Technique: Conditional expression
         
@@ -146,6 +147,7 @@ class Shop:
     
     def buy_item(self, item):
         """Attempts to buy an item from the shop.
+        
         Author: Ethan Gustave
         
         Args:
@@ -161,8 +163,6 @@ class Shop:
                 if the item is bought.
             Modifies attributes owned_recipes or ad_level if an item is bought.
         """
-        
-        # if item in self.unlockable:
         if self.unlockable[item] == "Owned":
             pass
         else:
@@ -172,9 +172,9 @@ class Shop:
                 print(f"You purchased {item}.")
             elif item in self.ad_levels:
                 for a in self.ad_levels:
-                    self.unlockable[a] = "Locked" ## to match start of game
+                    self.unlockable[a] = "Locked"
                 self.unlockable[item] = "Owned"
-                self.ad_level.clear()     ## so that there's only one value for current ad level
+                self.ad_level.clear()
                 self.ad_level.update({item:self.shopdata["Ad levels"][item]})
                 print(f"You purchased {item}.")
 
@@ -199,7 +199,7 @@ class Game:
         Side effects: 
             Sets attributes customers, shop, and profit.
         """
-        with open(customer_path, 'r') as f: # should we add encoding?
+        with open(customer_path, 'r', encoding='utf-8') as f:
             self.customers = f.readlines()
             
         self.shop = Shop(shop_path)
@@ -281,27 +281,19 @@ class Game:
         elif more.lower() == 'n':
             self.fulfill_request('continue')
     
-    def day_profit(self, show_stats=True, expense_rate=None):
+    def day_profit(self, expense_rate=None):
         """Calculate daily profit, expenses, and total profit.
         
         Author: Sarayu Vanam
         Technique: Optional Parameters
         
         Args:
-            show_stats (bool): Method does nothing if False. Method executes as 
-                normal if True. Defaults to True.
             expense_rate (None or float): A set amount of money going towards 
                 expenses.
-                
-        Returns:
-            None: If show_stats is False
             
         Side effects:
-            Prints to stdout if show_stats is True.
             Modifies attribute profit.
         """
-        if not show_stats:
-            return None
         current_level = list(self.shop.ad_level)[0]
         num_customers = self.shop.shopdata["Ad levels"][current_level]
         customers = self.create_customers(num_customers)
@@ -313,20 +305,11 @@ class Game:
             order_amt = choice(self.shop.shopdata["Order amounts"])
             price = self.shop.shopdata["Selling prices"][current_dish]
             score = handle_dish(current_dish, self.shop.owned_recipes, c, order_amt)
-            # revenue += (price * (score / 2))
             total_tips += score/2
-            revenue += ((price * order_amt) + (score/2)) ## added order amounts from JSON file
-            ## changed selling_price to price to make it a line under 80 chars {crying emoji}
+            revenue += ((price * order_amt) + (score/2))
 
         if expense_rate is None:
-            # expense_rate = 1.0 ## for testing
             expense_rate = random.rand() * 0.25
-        
-        # self.expense_rate = expense_rate
-        # if self.expense_rate is None:
-        #     self.expense_rate = 1 # for testing
-        #     #random.rand() # * 0.25
-            
         expenses = round(revenue * expense_rate, 2) 
         daily_profit = round(revenue - expenses, 2)
         self.profit += daily_profit
@@ -338,7 +321,6 @@ class Game:
             f"Expenses: ${'{:,.2f}'.format(expenses)}\n"
             f"Daily profit: ${'{:,.2f}'.format(daily_profit)}\n"
             f"Total profit: ${'{:,.2f}'.format(self.profit)}"
-            f"\nExpense rate: {expense_rate}" # for testing
         )
         self.prompt_request()
     
@@ -370,19 +352,17 @@ class Game:
                 elif self.shop.get_price(item) > self.profit:
                     print("*You can't afford this item.\n")
                     self.run_shop()
-            # else:
-            #     print("We don't have this item.\n") ## what 'while not self.shop.check_item' does
         elif player_in.lower() == "leave":
             print("Thanks for stopping by!\n")
-            self.prompt_request() ## go back to menu options ?
+            self.prompt_request()
             
     def start(self):
-        """_summary_
+        """Start the game.
 
         Author: Angela Kyuk
         
-        Returns:
-            _type_: _description_
+        Side effects:
+            Prints to stdout.
         """
         print("\nWelcome to Bakery Simulator!")
         print("To learn more about how to play, check the README.md file!\n")
@@ -417,13 +397,11 @@ class Game:
 
 
 def handle_dish(current_dish, recipe_dict, customer_name, order_amt):
-    """
-
+    """Handles the playing stage of a dish by giving inputs to the user. Their
+    performance is decided by the order in which the ingredients are typed.
+    
     Author: Kyle Tice (with customer logic from Ethan Gustave)
     Technique: F-String containing an expression
-    
-    Handles the playing stage of each dish by giving inputs to the user. Their
-    performance is decided by the order in which the ingredients are typed.
 
     Args: 
         current_dish (String): the current food dish being made
@@ -435,29 +413,18 @@ def handle_dish(current_dish, recipe_dict, customer_name, order_amt):
     
     Returns:
         score (int): the score of the dish the user just created
-    
-    Technique:
-        f-strings
     """
-    # defines the correct order of ingredients
     correct_order = recipe_dict[current_dish]
-    
     shuffled = correct_order[:]
     shuffle(shuffled)
-    # print(f"{customer_name} walked in!")
     print(f"{customer_name} ordered {order_amt} {current_dish}!\n")
-    # print(f"\nDish: {current_dish}")
     print(f"Shuffled recipe:")
 
-    # builds the user-inputted list of ingredients
     for ingredient in shuffled:
         print(f"- {ingredient}")
-
     print("\nEnter the ingredients in the correct order:")
-
     user_list = []
 
-    
     for i in range(len(correct_order)):
         user_input = input(f"Step {i+1}: ").strip()
         user_list.append(user_input)
@@ -474,14 +441,12 @@ def handle_dish(current_dish, recipe_dict, customer_name, order_amt):
 
 
 def rate_dish(user_list, correct_list):
-    """
+    """ Rates the dish the user just created by checking the positions of all 
+    user inputted ingredients in comparison to the correct list of ingredients.
 
     Author: Kyle Tice
     Technique: key function (lambda) with sorted
     
-    Rates the dish the user just created by checking the positions of all user
-    inputted ingredients in comparison to the correct list of ingredients.
-
     Args: 
         user_list (list of str): the list of ingredients the user typed
         correct_list (list of str): the correct list of ingredients for the dish
@@ -491,9 +456,6 @@ def rate_dish(user_list, correct_list):
     
     Returns:
         score (int): the score of the dish the user just created
-    
-    Technique:
-        key lambda with sorting
     """
     # ranks ingredients so that correct ones are listed first
     ranked = sorted(
@@ -524,8 +486,7 @@ def main(shop_path, customer_path, expense_rate=None):
     game.start()
     
 def parse_args():
-    """
-    Do parse command-line arguments.
+    """Parse command-line arguments.
     
     Author: Sarayu Vanam
     Technique: ArgumentParser
@@ -543,5 +504,3 @@ def parse_args():
 if __name__ == "__main__":
     args = parse_args()
     main(args.shop_path, args.customer_path, args.expense_rate)
-    
-# python3 simulator_main.py shop_data.JSON customers.txt 
