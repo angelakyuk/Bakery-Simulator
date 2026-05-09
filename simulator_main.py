@@ -281,7 +281,7 @@ class Game:
         elif more.lower() == 'n':
             self.fulfill_request('continue')
     
-    def day_profit(self, expense_rate=None):
+    def day_profit(self, show_stats=True, expense_rate=None):
         """Calculate daily profit, expenses, and total profit.
         
         Author: Sarayu Vanam
@@ -294,6 +294,8 @@ class Game:
         Side effects:
             Modifies attribute profit.
         """
+        if not show_stats:
+            return None
         current_level = list(self.shop.ad_level)[0]
         num_customers = self.shop.shopdata["Ad levels"][current_level]
         customers = self.create_customers(num_customers)
@@ -344,13 +346,14 @@ class Game:
                 self.prompt_request()
             elif self.shop.check_item(item):
                 if self.shop.unlockable[item] == "Owned":
-                    print("*You already own this item!\n")
+                    print("* You already own this item!\n")
+                    self.run_shop()
                 elif self.shop.get_price(item) <= self.profit:
                     self.shop.buy_item(item)
                     print("Thank you for your business!")
                     self.run_shop()
                 elif self.shop.get_price(item) > self.profit:
-                    print("*You can't afford this item.\n")
+                    print("* You can't afford this item.\n")
                     self.run_shop()
         elif player_in.lower() == "leave":
             print("Thanks for stopping by!\n")
