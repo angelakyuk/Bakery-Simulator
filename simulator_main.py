@@ -103,9 +103,10 @@ class Shop:
                 f"{'\n'.join(ad_shop)}"
         )
         
-    #Shop methods below by Ethan Gustave
     def get_price(self, item_name):
         """Gets price of item given the item's name.
+        
+        Author: Ethan Gustave
         
         Args: 
             item_name (str): The name of the item whose price is to be checked.
@@ -120,23 +121,21 @@ class Shop:
     
     def owned(self, item):
         """Checks if item is owned.
-            
+        Author: Ethan Gustave
+        Technique: Conditional expression
+        
         Args:
             item_name (str): The name of the item to be checked.
         
         Returns:
             Bool: True if item is owned. False if item is not owned.
             """
-        if self.unlockable[item] == "Owned":
-            return True
-        else:
-            return False
-        # return True if self.unlockable[item] == "Owned" else False ?
-            ## conditional expr equiv to whole conditional statement (if it's right)
+        return True if self.unlockable[item] == "Owned" else False
         
     def check_item(self, item_name):
         """Checks if item request is valid. 
-            
+        Author: Ethan Gustave
+        
         Args:
             item_name (str): The name of the item to be bought.
             
@@ -147,6 +146,7 @@ class Shop:
     
     def buy_item(self, item):
         """Attempts to buy an item from the shop.
+        Author: Ethan Gustave
         
         Args:
             item (str): The name of the item to be bought
@@ -208,6 +208,8 @@ class Game:
     def valid_request(self, request):
         """Ensure that the player's input for a menu option request is valid.
     
+        Author: Angela Kyuk
+        
         Args:
             request (str): The player's input when asked if they want a certain 
                 menu option.
@@ -284,6 +286,7 @@ class Game:
         """Calculate daily profit, expenses, and total profit.
         
         Author: Sarayu Vanam
+        Technique: Optional Parameters
         
         Args:
             show_stats (bool): Method does nothing if False. Method executes as 
@@ -341,7 +344,12 @@ class Game:
         self.prompt_request()
     
     def run_shop(self):
-        """
+        """Runs the shop process of the game, displaying the shop's GUI and 
+            responding to user input
+            
+            Author: Ethan Gustave
+            
+            Side Effects: Prints to console
         """
         print("\n----- Shop Options ------")
         player_in = input("[buy] to buy an item\n[leave] to leave shop\n>>> ")
@@ -372,6 +380,8 @@ class Game:
     def start(self):
         """_summary_
 
+        Author: Angela Kyuk
+        
         Returns:
             _type_: _description_
         """
@@ -381,11 +391,13 @@ class Game:
         if start or not start:
             print("﹌﹌﹌﹌﹌﹌﹌﹌﹌﹌﹌﹌﹌﹌﹌﹌﹌﹌﹌﹌﹌﹌﹌﹌﹌﹌﹌﹌﹌﹌﹌﹌﹌﹌﹌")
             self.day_profit()
-#Ethan Gustave's Function
 
     def create_customers(self, num):
         """Creates a list of customers from the amount specified for the day
-
+        
+        Author: Ethan Gustave
+        Technique: with statement
+        
         Args: 
             num(int): the number of customers to be generated based on ad level.
             customers_path(str): the path of the txt file to be used to import
@@ -395,7 +407,6 @@ class Game:
             customer_final (list): A list of customer names.
         """ 
         customer_final = []
-        # indices = []
         
         count = 0 
         while count < num:
@@ -404,26 +415,13 @@ class Game:
             count += 1
         return customer_final
             
-        #     curr = choice(self.customers).strip()
 
-        #     if curr not in indices:
-        #         customer_final.append(curr)
-        #         indices.append(curr)
-        #         count += 1
-        #     else:
-        #         customer_final.append(curr)
-        #         indices.append(self.customers[curr])
-        #     #count += 1
-        
-        # return customer_final
-
-
-#Kyle Tice's Function
 
 def handle_dish(current_dish, recipe_dict, customer_name, order_amt):
     """
 
     Author: Kyle Tice (with customer logic from Ethan Gustave)
+    Technique: F-String containing an expression
     
     Handles the playing stage of each dish by giving inputs to the user. Their
     performance is decided by the order in which the ingredients are typed.
@@ -479,6 +477,7 @@ def rate_dish(user_list, correct_list):
     """
 
     Author: Kyle Tice
+    Technique: key function (lambda) with sorted
     
     Rates the dish the user just created by checking the positions of all user
     inputted ingredients in comparison to the correct list of ingredients.
@@ -529,6 +528,7 @@ def parse_args():
     Do parse command-line arguments.
     
     Author: Sarayu Vanam
+    Technique: ArgumentParser
 
     Returns:
         argparse.Namespace: Parsed arguments with shop_path, customer_path,
