@@ -349,11 +349,11 @@ class Game:
             player_in = input("That's not a valid option. Try again!\n>>> ")
         if player_in.lower() == "buy":
             item = input("\nWhat would you like to buy?\n>>> ").capitalize()
+            while not self.shop.check_item(item) and item.lower() != 'q':
+                item = input("That's not a shop item. Try again!\n>>> ").capitalize()
             if item.lower() == "q":
                 self.prompt_request()
-            while not self.shop.check_item(item):
-                item = input("That's not a shop item. Try again!\n>>> ").capitalize()
-            if self.shop.check_item(item):
+            elif self.shop.check_item(item):
                 if self.shop.unlockable[item] == "Owned":
                     print("*You already own this item!\n")
                 elif self.shop.get_price(item) <= self.profit:
