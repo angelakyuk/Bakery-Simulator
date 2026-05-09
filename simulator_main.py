@@ -99,7 +99,7 @@ class Shop:
                 f"{'\n'.join(recipe_shop)}"
                 f"\n\n------ Ad Level Shop ------\n"
                 f"Level Price (P) | Customers (C) | Lock Status\n"
-                '*Note: You can only own one ad level. If you buy a new one, the rest will be locked.\n'
+                '*Note: If you buy a new ad level, the rest will be locked.\n'
                 f"{'\n'.join(ad_shop)}"
         )
         
@@ -157,9 +157,9 @@ class Shop:
                 
         Side Effects: 
             Prints to console depending on result of method.
-            Changes the value of an item in the dictionary unlockable from 
-                "Locked" to "Owned" if the item is bought.
-            # Modifies attributes owned_recipes or ad_level if the item is bought. (if we move these)
+            Modifies attribute unlockable. The value of a key changes to "Owned"
+                if the item is bought.
+            Modifies attributes owned_recipes or ad_level if an item is bought.
         """
         
         # if item in self.unlockable:
@@ -216,13 +216,10 @@ class Game:
             str: The player's input if it's valid or "invalid" if the input is 
                 invalid.
         """
-        if not isinstance(request, str):
-            return 'invalid'
+        if request in ('shop', 'recipes', 'continue', 'end'):
+            return request
         else:
-            if request in ('shop', 'recipes', 'continue', 'end'):
-                return request
-            else:
-                return 'invalid'
+            return 'invalid'
             
     def fulfill_request(self, request):
         """Carry out the player's menu option request.
@@ -234,8 +231,9 @@ class Game:
     
         Side effects:
             Prints to stdout.
-            Modifies attributes if the player purchases an item in run_shop.
-            Terminates program if the player inputs "end"
+            Modifies certain attributes if the player buys an item (via buy_item()
+            in run_shop()).
+            Terminates program if the player inputs "end".
         """
         if request == 'recipes':
             recipes = [f"\n{r}: {self.shop.owned_recipes[r]}" 
@@ -258,7 +256,8 @@ class Game:
     
         Side effects:
             Prints to stdout.
-            Modifies certain attributes if player purchases an item.
+            Modifies certain attributes if player purchases an item (via 
+                buy_item() in fulfill_request()).
         """
         menu_options = ("\n------ Menu Options ------\n"
                     "[recipes] to review your recipes\n"
@@ -341,7 +340,15 @@ class Game:
         self.prompt_request()
     
     def run_shop(self):
-        """
+        """Purchase an item.
+        
+        Args:
+        
+        Returns:
+        
+        Side effects:
+            Prints to stdout.
+            Modifies certain attributes if an item is purchased (via buy_item()).
         """
         print("\n----- Shop Options ------")
         player_in = input("[buy] to buy an item\n[leave] to leave shop\n>>> ")
@@ -433,7 +440,8 @@ def handle_dish(current_dish, recipe_dict, customer_name, order_amt):
         recipe_dict (dict): dictionary of foods and associated ingredient lists
 
     Side Effects:
-        Prompts user for extra inputs (active game stage)
+        Prompts user for extra inputs (active game stage).
+        Terminates program if player enters 'q'.
     
     Returns:
         score (int): the score of the dish the user just created
