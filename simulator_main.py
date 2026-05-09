@@ -135,6 +135,7 @@ class Shop:
         
     def check_item(self, item_name):
         """Checks if item request is valid. 
+        
         Author: Ethan Gustave
         
         Args:
@@ -211,8 +212,7 @@ class Game:
         Author: Angela Kyuk
         
         Args:
-            request (str): The player's input when asked if they want a certain 
-                menu option.
+            request (str): The player's menu option request.
     
         Returns:
             str: The player's input if it's valid or "invalid" if the input is 
@@ -259,7 +259,7 @@ class Game:
         Side effects:
             Prints to stdout.
             Modifies certain attributes if player purchases an item (via 
-                buy_item() in fulfill_request()).
+                run_shop() in fulfill_request()).
         """
         menu_options = ("\n------ Menu Options ------\n"
                     "[recipes] to review your recipes\n"
@@ -288,10 +288,14 @@ class Game:
         Technique: Optional Parameters
         
         Args:
+            show_stats (bool): Method does nothing if False. Method executes as 
+                normal if True. Defaults to True.
+                
             expense_rate (None or float): A set amount of money going towards 
                 expenses.
             
         Side effects:
+            Prints to stdout.
             Modifies attribute profit.
         """
         if not show_stats:
@@ -332,7 +336,8 @@ class Game:
             
             Author: Ethan Gustave
             
-            Side Effects: Prints to console
+            Side Effects: 
+                Prints to console
         """
         print("\n----- Shop Options ------")
         player_in = input("[buy] to buy an item\n[leave] to leave shop\n>>> ")
@@ -460,7 +465,6 @@ def rate_dish(user_list, correct_list):
     Returns:
         score (int): the score of the dish the user just created
     """
-    # ranks ingredients so that correct ones are listed first
     ranked = sorted(
         user_list,
         key=lambda x: (
@@ -468,13 +472,11 @@ def rate_dish(user_list, correct_list):
             correct_list.index(x) if x in correct_list else float('inf')
         )
     )
-
-    # displays the ranking of the user's ingredients
+    
     print("\nRanked ingredients (correct to incorrect):")
     for item in ranked:
         print(f"- {item}")
 
-    # score based on correct position
     score = sum(
         1 for i in range(len(correct_list))
         if i < len(user_list) and user_list[i] == correct_list[i]
