@@ -68,7 +68,7 @@ except while baking.
 ### Optional Command Line Arguments
 * --expense-rate: A float/integer to be used as the expense rate.
 
-E.g. python3 simulator_main.py shop_data.JSON --expense-rate 0.25
+E.g. python3 simulator_main.py shop_data.JSON customers.txt --expense-rate 0.25
 
 # Files
 ## Main Project Files
